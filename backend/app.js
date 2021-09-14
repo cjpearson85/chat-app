@@ -2,13 +2,23 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const User = require('./schemas/user')
+const devDb = require('./devDbUri')
+const testDb = require('./testDbUri')
 
 const app = express()
-// connect to mongoDb
-const dbURI = 'mongodb+srv://mattk47:test1234@socialtourapp.dystg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
-mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => { console.log('connected to db') })
-    .catch((err) => (console.log(err)))
+const ENV = process.env.NODE_ENV || 'development';
+
+if (ENV === "test") {
+    mongoose.connect(testDb, { useNewUrlParser: true, useUnifiedTopology: true })
+        .then(() => { console.log('connected to test db') })
+        .catch((err) => (console.log(err)))
+
+} else {
+    mongoose.connect(devDb, { useNewUrlParser: true, useUnifiedTopology: true })
+        .then(() => { console.log('connected to dev db') })
+        .catch((err) => (console.log(err)))
+
+}
 
 app.use(cors());
 app.use(express.json());
