@@ -1,35 +1,35 @@
-const faker = require("faker");
-const MongoClient = require("mongodb").MongoClient;
+const faker = require('faker')
+const MongoClient = require('mongodb').MongoClient
 const uri = require('../../testDbUri')
 
 
 async function seedDB() {
-    const client = new MongoClient(uri, {
-        useNewUrlParser: true,
-    });
-    try {
-        await client.connect();
-        console.log("Connected correctly to server");
-        const collection = client.db("Social-app-test-db").collection("users");
-        collection.drop();
+  const client = new MongoClient(uri, {
+    useNewUrlParser: true,
+  })
+  try {
+    await client.connect()
+    console.log('Connected correctly to server')
+    const collection = client.db('Social-app-test-db').collection('users')
+    collection.drop()
 
-        let usersData = [];
-        for (let i = 0; i < 5; i++) {
-            const name = faker.name.firstName() + ' ' + faker.name.lastName() ;
-            const avatar_url = faker.name.firstName()
-            const username = faker.name.firstName()
-            const password = faker.name.firstName()
-            usersData.push({name, avatar_url, username, password});
-            };
-
-        await collection.insertMany(usersData)
-        console.log("Database seeded! :)");
-        client.close();
-    } catch (err) {
-        console.log(err.stack);
+    let usersData = []
+    for (let i = 0; i < 5; i++) {
+      const name = faker.name.firstName() + ' ' + faker.name.lastName() 
+      const avatar_url = faker.name.firstName()
+      const username = faker.name.firstName()
+      const password = faker.name.firstName()
+      usersData.push({name, avatar_url, username, password})
     }
+
+    await collection.insertMany(usersData)
+    console.log('Database seeded! :)')
+    client.close()
+  } catch (err) {
+    console.log(err.stack)
+  }
 }
-seedDB();
+seedDB()
 
 // // const db = require('../connection')
 // // const { connection } = require('mongoose');
