@@ -16,5 +16,3 @@ if (ENV === "test") {
 
 }
 module.exports = db;
-
-
