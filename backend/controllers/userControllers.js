@@ -1,3 +1,3 @@
-exports.getUsers = (req, res, next) => {};
+exports.getUsers = (req, res, next) => { };
 
-exports.getUsersByUsername = (req, res, next) => {};
+exports.getUserByUsername = (req, res, next) => { };
