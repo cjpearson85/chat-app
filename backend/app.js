@@ -3,6 +3,7 @@ const cors = require('cors');
 const User = require('./schemas/user')
 const apiRouter = require('./routers/api.router');
 const app = express()
+const db = require('./db/connection')
 
 
 app.use(cors());
