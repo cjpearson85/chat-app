@@ -6,8 +6,9 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint ./",
-    "start": "nodemon listen.js",
-    "prepare": "husky install"
+    "nodemon": "nodemon listen.js",
+    "prepare": "husky install",
+    "start": "node listen.js"
   },
   "keywords": [],
   "author": "",
