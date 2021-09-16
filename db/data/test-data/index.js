@@ -7,11 +7,11 @@ const routes = require('./routes-output.json')
 const users = require('./users-output.json')
 
 module.exports = {
-    commentLikes,
-    comments,
-    follows,
-    pois, 
-    routeLikes,
-    routes,
-    users
+  commentLikes,
+  comments,
+  follows,
+  pois, 
+  routeLikes,
+  routes,
+  users
 }

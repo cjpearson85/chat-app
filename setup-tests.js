@@ -24,8 +24,7 @@ async function dropAllCollections () {
 }
 
 async function seedAllCollections () {
-  for (model in testData) {
-    console.log(model)
+  for (let model in testData) {
     await mongoose.connection.models[model.charAt(0).toUpperCase() + model.slice(1)]
       .insertMany(testData[model])
   }
