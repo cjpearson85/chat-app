@@ -24,7 +24,8 @@ for (let i = 0; i < 15; i++) {
   const username = faker.internet.userName()
   const salt = generateSalt()
   const hash = hashPassword(username, salt)
-  usersData.push({ name, avatar_url, username, salt, hash})
+  const bio = faker.lorem.paragraph()
+  usersData.push({ name, avatar_url, username, bio, salt, hash})
 }
 
 fs.writeFileSync('./db/data/test-data/users.seed.js', 'module.exports = ' + JSON.stringify(usersData))
