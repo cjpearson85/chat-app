@@ -28,7 +28,7 @@ for (let i = 0; i < 15; i++) {
   usersData.push({ name, avatar_url, username, bio, salt, hash})
 }
 
-fs.writeFileSync('./db/data/test-data/users.seed.js', 'module.exports = ' + JSON.stringify(usersData))
+fs.writeFileSync('./db/data/test-data/generated/users.seed.js', 'module.exports = ' + JSON.stringify(usersData))
 
 const gpxs = []
 for (let i = 0; i < 7; i++) {
@@ -45,7 +45,7 @@ for (let i = 0; i < 20; i++) {
   routesData.push({ title, description, start_time_date, coords})
 }
 
-fs.writeFileSync('./db/data/test-data/routes.seed.js', 'module.exports = ' + JSON.stringify(routesData))
+fs.writeFileSync('./db/data/test-data/generated/routes.seed.js', 'module.exports = ' + JSON.stringify(routesData))
 
 let poiData = []
 for (let i = 0; i < 80; i++) {
@@ -58,7 +58,7 @@ for (let i = 0; i < 80; i++) {
   poiData.push({ photo, narration})
 }
 
-fs.writeFileSync('./db/data/test-data/pois.seed.js', 'module.exports = ' + JSON.stringify(poiData))
+fs.writeFileSync('./db/data/test-data/generated/pois.seed.js', 'module.exports = ' + JSON.stringify(poiData))
 
 let commentData = []
 for (let i = 0; i < 80; i++) {
@@ -66,5 +66,5 @@ for (let i = 0; i < 80; i++) {
   commentData.push({ body})
 }
 
-fs.writeFileSync('./db/data/test-data/comments.seed.js', 'module.exports = ' + JSON.stringify(commentData))
+fs.writeFileSync('./db/data/test-data/generated/comments.seed.js', 'module.exports = ' + JSON.stringify(commentData))
 

@@ -11,10 +11,10 @@ const {
   routesTestData, 
   poisTestData, 
   usersTestData
-} = require('../data/test-data/index')
+} = require('../data/test-data/generated/index')
+const url = `mongodb://127.0.0.1/test`
 
 const addIds = async (commentsTestData, routesTestData, poisTestData, usersTestData) => {
-  const url = `mongodb://127.0.0.1/test`
   const connection = await mongoose.connect(url)
 
   if (connection.models.User !== undefined) {
@@ -118,10 +118,50 @@ const addIds = async (commentsTestData, routesTestData, poisTestData, usersTestD
   }
   const insertedFollows = await connection.models.Follow.insertMany(followTestData)
 
-  console.log(insertedFollows)
-
-
   await mongoose.connection.close()
 }
 
 addIds(commentsTestData, routesTestData, poisTestData, usersTestData)
+
+const writeCollection = (collectionName) => {
+  const getDocuments = function(db, callback) {
+    db.collection(collectionName)
+      .find({})
+      .toArray(function(err, result) { 
+          if (err) throw err; 
+          callback(result); 
+    })
+  }
+  
+  const MongoClient = require('mongodb').MongoClient;
+  const fs = require('fs');
+  const dbName = 'test';
+  const client = new MongoClient(url)
+  
+  client.connect(function(err) {
+      console.log('Connected successfully to server');
+      const db = client.db(dbName);
+  
+      getDocuments(db, function(docs) {
+      
+          console.log('Closing connection.');
+          client.close();
+          
+          try {
+              fs.writeFileSync(`db/data/${collectionName}-output.js`, JSON.stringify(docs));
+              console.log('Done writing to file.');
+          }
+          catch(err) {
+              console.log('Error writing to file', err)
+          }
+      })
+  })
+}
+
+writeCollection('users')
+writeCollection('comments')
+writeCollection('pois')
+writeCollection('routelikes')
+writeCollection('commentlikes')
+writeCollection('follows')
+writeCollection('routes')
