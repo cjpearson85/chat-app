@@ -3,6 +3,9 @@ const User = require('../../schemas/user')
 const Route = require('../../schemas/route')
 const Comment = require('../../schemas/comment')
 const Poi = require('../../schemas/poi')
+const RouteLike = require('../../schemas/route-like')
+const CommentLike = require('../../schemas/comment-like')
+const Follow = require('../../schemas/follow')
 const {
   commentsTestData, 
   routesTestData, 
@@ -40,7 +43,7 @@ const addIds = async (commentsTestData, routesTestData, poisTestData, usersTestD
     return copy
   })
 
-  await connection.models.Comment.insertMany(commentsWithUserAndRoute)
+  const insertedComments = await connection.models.Comment.insertMany(commentsWithUserAndRoute)
   
   if (connection.models.Poi !== undefined) {
     await connection.models.Poi.collection.drop()
@@ -54,10 +57,70 @@ const addIds = async (commentsTestData, routesTestData, poisTestData, usersTestD
     copy.coords = { latitude: point.latitude, longitude: point.longitude, time: point.time }
     return copy
   })
-console.log(poisWithRouteandCoords)
-  const insertedPois = await connection.models.Poi.insertMany(poisWithRouteandCoords)
-  console.log(insertedPois)
+  await connection.models.Poi.insertMany(poisWithRouteandCoords)
   
+  if (connection.models.RouteLike !== undefined) {
+    await connection.models.RouteLike.collection.drop()
+  }
+
+  let routeLikeCount = 0
+  let routeLikeCombinations = []
+  let routeLikesTestData = []
+  while (routeLikeCount < 200) {
+    const user = insertedUsers[Math.floor(Math.random() * (insertedUsers.length - 1))]._id
+    const route = insertedRoutes[Math.floor(Math.random() * (insertedRoutes.length - 1))]._id
+    let combination = `${user}${route}`
+    if (!routeLikeCombinations.includes(combination)) {
+      routeLikeCombinations.push(combination)
+      routeLikeCount++
+      routeLikesTestData.push({route_id: route, user_id: user})
+    }
+  }
+
+  await connection.models.RouteLike.insertMany(routeLikesTestData)
+
+  if (connection.models.CommentLike !== undefined) {
+    await connection.models.CommentLike.collection.drop()
+  }
+
+  let commentLikeCount = 0
+  let commentLikeCombinations = []
+  let commentLikesTestData = []
+  while (commentLikeCount < 300) {
+    const user = insertedUsers[Math.floor(Math.random() * (insertedUsers.length - 1))]._id
+    const comment = insertedComments[Math.floor(Math.random() * (insertedComments.length - 1))]._id
+    let combination = `${user}${comment}`
+    if (!commentLikeCombinations.includes(combination)) {
+      commentLikeCombinations.push(combination)
+      commentLikeCount++
+      commentLikesTestData.push({comment_id: comment, user_id: user})
+    }
+  }
+
+  await connection.models.CommentLike.insertMany(commentLikesTestData)
+
+  if (connection.models.Follow !== undefined) {
+    await connection.models.Follow.collection.drop()
+  }
+
+  let followCount = 0
+  let followCombinations = []
+  let followTestData = []
+  while (followCount < 100) {
+    const follower = insertedUsers[Math.floor(Math.random() * (insertedUsers.length - 1))]._id
+    const followed = insertedUsers[Math.floor(Math.random() * (insertedUsers.length - 1))]._id
+    let followCombination = `${follower}${followed}`
+    if (!commentLikeCombinations.includes(followCombination) && follower !== followed) {
+      followCombinations.push(followCombination)
+      followCount++
+      followTestData.push({follower_id: follower, followed_id: followed})
+    }
+  }
+  const insertedFollows = await connection.models.Follow.insertMany(followTestData)
+
+  console.log(insertedFollows)
+
+
   await mongoose.connection.close()
 }
 
