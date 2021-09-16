@@ -16,7 +16,8 @@ const userSchema = new Schema(
       maxLength: 200,
     },
     username: { type: 'string', required: true, unique: true, maxLength: 15 },
-    password: { type: 'string', required: true },
+    hash: { type: 'string', required: true },
+    salt: { type: 'string', required: true },
   },
   { timestamps: true }
 )
