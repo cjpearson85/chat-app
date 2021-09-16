@@ -128,33 +128,33 @@ const writeCollection = (collectionName) => {
     db.collection(collectionName)
       .find({})
       .toArray(function(err, result) { 
-          if (err) throw err; 
-          callback(result); 
-    })
+        if (err) throw err 
+        callback(result) 
+      })
   }
   
-  const MongoClient = require('mongodb').MongoClient;
-  const fs = require('fs');
-  const dbName = 'test';
+  const MongoClient = require('mongodb').MongoClient
+  const fs = require('fs')
+  const dbName = 'test'
   const client = new MongoClient(url)
   
   client.connect(function(err) {
-      console.log('Connected successfully to server');
-      const db = client.db(dbName);
+    console.log('Connected successfully to server')
+    const db = client.db(dbName)
   
-      getDocuments(db, function(docs) {
+    getDocuments(db, function(docs) {
       
-          console.log('Closing connection.');
-          client.close();
+      console.log('Closing connection.')
+      client.close()
           
-          try {
-              fs.writeFileSync(`db/data/${collectionName}-output.js`, JSON.stringify(docs));
-              console.log('Done writing to file.');
-          }
-          catch(err) {
-              console.log('Error writing to file', err)
-          }
-      })
+      try {
+        fs.writeFileSync(`db/data/test-data/${collectionName}-output.js`, JSON.stringify(docs))
+        console.log('Done writing to file.')
+      }
+      catch(err) {
+        console.log('Error writing to file', err)
+      }
+    })
   })
 }
 
