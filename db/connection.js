@@ -1,12 +1,12 @@
 const mongoose = require('mongoose')
 const ENV = process.env.NODE_ENV || 'development'
-const devDb = require('../devDbUri')
-const testDb = require('../testDbUri')
+//const devDb = require('../devDbUri')
+//const testDb = require('../testDbUri')
 
 let db
 if (ENV === 'test') {
   db = mongoose
-    .connect(testDb, { useNewUrlParser: true, useUnifiedTopology: true })
+    .connect('testDb', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
       console.log('connected to test db')
     })
