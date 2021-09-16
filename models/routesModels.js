@@ -1,7 +1,8 @@
 const { Router } = require('express')
+const Route = require('../schemas/route')
+const { route } = require('../app')
 
-exports.getAllRoutes = () => {
-  //   return Router.find().then((routes) => {
-  //     return routes
-  //   })
+exports.selectAllRoutes = async () => {
+  const result = await Route.find({})
+  return result
 }

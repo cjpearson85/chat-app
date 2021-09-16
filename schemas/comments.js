@@ -1,22 +1,14 @@
 const mongoose = require('mongoose')
-// const Schema = mongoose.Schema
+const Schema = mongoose.Schema
 
 var commentSchema = new mongoose.Schema(
   {
-    route_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Route',
+    route_id: { type: Schema.Types.ObjectId, ref: 'Route' },
+    user_id: { type: Schema.Types.ObjectId, ref: 'User' },
+    body: {
+      type: 'string',
+      required: true,
     },
-    comments: [
-      {
-        text: 'string',
-        username: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'User',
-        },
-      },
-    ],
-    time: { type: 'integer', required: true },
   },
   { timestamp: true }
 )
