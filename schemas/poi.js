@@ -16,14 +16,12 @@ const poiSchema = new Schema(
       maxLength: 300,
     },
     coords: {
-      lat: { type: 'integer', required: true },
-      long: { type: 'integer', required: true },
-      alt: { type: 'integer', required: true },
-      time: { type: 'integer', required: true },
+      latitude: { type: 'Number', required: true },
+      longitude: { type: 'Number', required: true },
     },
   },
   { timestamps: true }
 )
 
-const poi = mongoose.model('Poi', poiSchema)
-module.exports = poi
+const Poi = mongoose.model('Poi', poiSchema)
+module.exports = Poi

@@ -10,7 +10,7 @@ const routeSchema = new Schema(
     description: {
       type: 'string',
       required: false,
-      maxLength: 150,
+      maxLength: 350,
     },
     user_id: { type: Schema.Types.ObjectId, ref: 'User' },
     coords: { type: 'array', required: true },
