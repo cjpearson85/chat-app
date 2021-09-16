@@ -8,6 +8,11 @@ const userSchema = new Schema(
       required: false,
       maxLength: 50,
     },
+    bio: {
+      type: 'string',
+      required: false,
+      maxLength: 1000
+    },
     avatar_url: {
       type: 'string',
       required: false,
