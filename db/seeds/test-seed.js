@@ -39,7 +39,9 @@ const addIds = async (commentsTestData, routesTestData, poisTestData, usersTestD
     copy.route_id = insertedRoutes[Math.floor(Math.random() * (insertedRoutes.length - 1))]._id
     return copy
   })
-  const insertedComments = await connection.models.Comment.insertMany(commentsWithUserAndRoute)
+
+  await connection.models.Comment.insertMany(commentsWithUserAndRoute)
+  
   if (connection.models.Poi !== undefined) {
     await connection.models.Poi.collection.drop()
   }
@@ -48,11 +50,13 @@ const addIds = async (commentsTestData, routesTestData, poisTestData, usersTestD
     const copy = {...poi}
     const route = insertedRoutes[Math.floor(Math.random() * (insertedRoutes.length - 1))]
     copy.route_id = route._id
-    copy.coords.latitude = route.coords.latitude
+    const point = route.coords[Math.floor(Math.random() * (route.coords.length - 1))]
+    copy.coords = { latitude: point.latitude, longitude: point.longitude, time: point.time }
     return copy
   })
-  // const insertedPois = await connection.models.Poi.insertMany(poisWithRouteandCoords)
-  // console.log(insertedPois)
+console.log(poisWithRouteandCoords)
+  const insertedPois = await connection.models.Poi.insertMany(poisWithRouteandCoords)
+  console.log(insertedPois)
   
   await mongoose.connection.close()
 }

@@ -13,11 +13,12 @@ const poiSchema = new Schema(
     narration: {
       type: 'string',
       required: false,
-      maxLength: 300,
+      maxLength: 500,
     },
     coords: {
       latitude: { type: 'Number', required: true },
       longitude: { type: 'Number', required: true },
+      time: {type: 'Date'}
     },
   },
   { timestamps: true }
