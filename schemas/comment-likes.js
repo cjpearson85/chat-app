@@ -9,5 +9,5 @@ var commentLikesSchema = new mongoose.Schema(
   { timestamp: true }
 )
 
-const Comments = mongoose.model('Comments', commentLikesSchema)
-module.exports = Comments
+const CommentLike = mongoose.model('CommentLike', commentLikesSchema)
+module.exports = CommentLike

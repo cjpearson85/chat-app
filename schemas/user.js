@@ -20,12 +20,12 @@ const userSchema = new Schema(
         'https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png',
       maxLength: 200,
     },
-    username: { type: 'string', required: true, unique: true, maxLength: 15 },
+    username: { type: 'string', required: true, maxLength: 25 },
     hash: { type: 'string', required: true },
     salt: { type: 'string', required: true },
   },
   { timestamps: true }
 )
 
-const User = mongoose.model('user', userSchema)
+const User = mongoose.model('User', userSchema)
 module.exports = User
