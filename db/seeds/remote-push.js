@@ -14,7 +14,7 @@ async function seedDB() {
     const connection = await mongoose.connect(uri)
 
     console.log('Connected correctly to server')
-    
+
     if (connection.models.User !== undefined) {
       await connection.models.User.collection.drop()
     }
