@@ -18,7 +18,6 @@ exports.selectAllUsers = async () => {
 }
 
 exports.selectUserByUsername = async (username) => {
-  console.log('inside model')
   const result = await User.find({ username: `${username}` })
   let returnUser = {
     user_id: result[0]._id,
