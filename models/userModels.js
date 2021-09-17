@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 exports.selectAllUsers = async () => {
   console.log('inside user model')
   const result = await User.find({})
+  console.log(result, 'result inside model')
   return result
 }
 

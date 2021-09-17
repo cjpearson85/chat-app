@@ -4,9 +4,9 @@ const {
 } = require('../models/userModels')
 
 exports.getUsers = (req, res, next) => {
-  console.log('inside user controller')
   selectAllUsers()
     .then((users) => {
+      console.log(users, 'return in controller')
       res.status(200).send({ users })
     })
     .catch(next)
