@@ -121,8 +121,6 @@ const addIds = async (commentsTestData, routesTestData, poisTestData, usersTestD
   await mongoose.connection.close()
 }
 
-addIds(commentsTestData, routesTestData, poisTestData, usersTestData)
-
 const writeCollection = (collectionName) => {
   const getDocuments = function(db, callback) {
     db.collection(collectionName)
@@ -148,7 +146,7 @@ const writeCollection = (collectionName) => {
       client.close()
           
       try {
-        fs.writeFileSync(`db/data/test-data/${collectionName}-output.js`, JSON.stringify(docs))
+        fs.writeFileSync(`db/data/test-data/${collectionName}-output.json`, JSON.stringify(docs))
         console.log('Done writing to file.')
       }
       catch(err) {
@@ -158,10 +156,15 @@ const writeCollection = (collectionName) => {
   })
 }
 
-writeCollection('users')
-writeCollection('comments')
-writeCollection('pois')
-writeCollection('routelikes')
-writeCollection('commentlikes')
-writeCollection('follows')
-writeCollection('routes')
+const addIdsAndWrite = async () => {
+  await addIds(commentsTestData, routesTestData, poisTestData, usersTestData)
+  writeCollection('users')
+  writeCollection('comments')
+  writeCollection('pois')
+  writeCollection('routelikes')
+  writeCollection('commentlikes')
+  writeCollection('follows')
+  writeCollection('routes')
+}
+
+addIdsAndWrite()

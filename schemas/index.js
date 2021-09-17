@@ -7,11 +7,11 @@ const RouteLike = require('./route-like')
 const Route = require('./route')
 
 module.exports = {
-    Comment,
-    Follow,
-    User,
-    Poi,
-    CommentLike,
-    RouteLike,
-    Route
+  Comment,
+  Follow,
+  User,
+  Poi,
+  CommentLike,
+  RouteLike,
+  Route
 }

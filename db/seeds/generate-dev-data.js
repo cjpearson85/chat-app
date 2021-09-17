@@ -18,7 +18,7 @@ const parseStrava = (data) => {
 }
 
 let usersData = []
-for (let i = 0; i < 15; i++) {
+for (let i = 0; i < 22; i++) {
   const name = faker.name.firstName() + ' ' + faker.name.lastName() 
   const avatar_url = faker.image.imageUrl()
   const username = faker.internet.userName()
@@ -28,7 +28,7 @@ for (let i = 0; i < 15; i++) {
   usersData.push({ name, avatar_url, username, bio, salt, hash})
 }
 
-fs.writeFileSync('./db/data/test-data/generated/users.seed.js', 'module.exports = ' + JSON.stringify(usersData))
+fs.writeFileSync('./db/data/dev-data/generated/users.seed.js', 'module.exports = ' + JSON.stringify(usersData))
 
 const gpxs = []
 for (let i = 0; i < 7; i++) {
@@ -37,7 +37,7 @@ for (let i = 0; i < 7; i++) {
 }
 
 let routesData = []
-for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 40; i++) {
   const title = faker.lorem.words()
   const description = faker.lorem.sentences(2)
   const start_time_date = faker.date.past(3)
@@ -45,10 +45,10 @@ for (let i = 0; i < 20; i++) {
   routesData.push({ title, description, start_time_date, coords})
 }
 
-fs.writeFileSync('./db/data/test-data/generated/routes.seed.js', 'module.exports = ' + JSON.stringify(routesData))
+fs.writeFileSync('./db/data/dev-data/generated/routes.seed.js', 'module.exports = ' + JSON.stringify(routesData))
 
 let poiData = []
-for (let i = 0; i < 80; i++) {
+for (let i = 0; i < 250; i++) {
   let photo = Math.random() < 0.7 ? faker.image.nature() : null
   const narration = Math.random() < 0.7 ? faker.lorem.paragraph(): null
   if (!photo && !narration) {
@@ -58,13 +58,13 @@ for (let i = 0; i < 80; i++) {
   poiData.push({ photo, narration})
 }
 
-fs.writeFileSync('./db/data/test-data/generated/pois.seed.js', 'module.exports = ' + JSON.stringify(poiData))
+fs.writeFileSync('./db/data/dev-data/generated/pois.seed.js', 'module.exports = ' + JSON.stringify(poiData))
 
 let commentData = []
-for (let i = 0; i < 80; i++) {
+for (let i = 0; i < 500; i++) {
   const body = faker.lorem.paragraph()
   commentData.push({ body})
 }
 
-fs.writeFileSync('./db/data/test-data/generated/comments.seed.js', 'module.exports = ' + JSON.stringify(commentData))
+fs.writeFileSync('./db/data/dev-data/generated/comments.seed.js', 'module.exports = ' + JSON.stringify(commentData))
 
