@@ -1,3 +1,4 @@
+const {Route, Comment, User, Follow, Poi, CommentLike, RouteLike} = require('./schemas/index')
 const mongoose = require('mongoose')
 const testData = require('./db/data/test-data/index')
 
@@ -24,30 +25,12 @@ async function dropAllCollections () {
 }
 
 async function seedAllCollections () {
-  for (let model in testData) {
-    await mongoose.connection.models[model.charAt(0).toUpperCase() + model.slice(1)]
-      .insertMany(testData[model])
-  }
+  await mongoose.connection.models.User.insertMany(testData.users)
+  await mongoose.connection.models.Route.insertMany(testData.routes)
+  await mongoose.connection.models.Follow.insertMany(testData.follows)
+  await mongoose.connection.models.Poi.insertMany(testData.pois)
+  await mongoose.connection.models.RouteLike.insertMany(testData.routeLikes)
+  await mongoose.connection.models.CommentLike.insertMany(testData.commentLikes)
 }
 
-module.exports = {
-  setupDB () {
-    beforeAll(async () => {
-      const url = `mongodb://127.0.0.1/test`
-      await mongoose.connect(url)
-    })
-
-    beforeEach(async () => {
-      await seedAllCollections()
-    })
-
-    afterEach(async () => {
-      await removeAllCollections()
-    })
-
-    afterAll(async () => {
-      await dropAllCollections()
-      await mongoose.connection.close()
-    })
-  }
-}
+module.exports = { removeAllCollections, dropAllCollections,  seedAllCollections}
