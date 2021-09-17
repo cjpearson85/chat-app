@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const ENV = process.env.NODE_ENV || 'development'
-const devDb = require('../devDbUri')
-const testDb = require('../testDbUri')
+//const devDb = require('../devDbUri')
+//const testDb = require('../testDbUri')
 
 let db
 if (ENV === 'test') {
