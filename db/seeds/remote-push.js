@@ -57,31 +57,3 @@ async function seedDB() {
   }
 }
 seedDB()
-
-// const MongoClient = require('mongodb').MongoClient
-// const uri = require('../../devDbUri')
-// const devData = require('../data/dev-data/index')
-
-// async function seedDB() {
-//   const client = new MongoClient(uri, {
-//     useNewUrlParser: true,
-//   })
-//   try {
-//     await client.connect()
-//     console.log('Connected correctly to server')
-//     const usersCollection = client.db('Social-app-test-db').collection('users')
-//     const routesCollection = client.db('Social-app-test-db').collection('users')
-//     const commentsCollection = client.db('Social-app-test-db').collection('users')
-//     const poisCollection = client.db('Social-app-test-db').collection('users')
-//     const followsCollection = client.db('Social-app-test-db').collection('users')
-//     const routeLikesCollection = client.db('Social-app-test-db').collection('users')
-//     const commentLikesCollection = client.db('Social-app-test-db').collection('users')
-
-//     await collection.insertMany(usersData)
-//     console.log('Database seeded! :)')
-//     client.close()
-//   } catch (err) {
-//     console.log(err.stack)
-//   }
-// }
-// seedDB()

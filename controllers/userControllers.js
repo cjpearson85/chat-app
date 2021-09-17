@@ -12,7 +12,6 @@ exports.getUsers = (req, res, next) => {
 }
 
 exports.getUserByUsername = (req, res, next) => {
-  console.log('controller')
   const { username } = req.params
   selectUserByUsername(username).then((user) => {
     res.status(200).send({ user })

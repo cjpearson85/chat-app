@@ -12,7 +12,7 @@ const routeSchema = new Schema(
       required: false,
       maxLength: 350,
     },
-    user_id: { type: Schema.Types.ObjectId, ref: 'User' },
+    user_id: { type: Schema.Types.ObjectId, ref: 'User', required: true},
     coords: { type: 'array', required: true },
     start_time_date: { type: 'date', required: true },
   },

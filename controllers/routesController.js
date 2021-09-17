@@ -11,7 +11,6 @@ exports.getRoutes = (req, res, next) => {
 }
 
 exports.getRouteById = (req, res, next) => {
-  console.log('in here controller')
   const { route_id } = req.params
   selectRouteById(route_id)
     .then((route) => {

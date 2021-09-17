@@ -19,8 +19,8 @@ routesRouter
 
 routesRouter
   .route('/:route_id')
-    .get(getRouteById) // get route by id
-    .patch(patchRoute) // update a route
-    .delete(deleteRoute) // delete route from db
+  .get(getRouteById) // get route by id
+  .patch(patchRoute) // update a route
+  .delete(deleteRoute) // delete route from db
 
 module.exports = routesRouter
