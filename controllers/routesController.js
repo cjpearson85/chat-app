@@ -1,4 +1,8 @@
-const { selectAllRoutes } = require('../models/routesModels')
+const {
+  selectAllRoutes,
+  insertRoute,
+  selectRouteById,
+} = require('../models/routesModels')
 
 exports.getRoutes = (req, res, next) => {
   selectAllRoutes.then((routes) => {
@@ -6,9 +10,23 @@ exports.getRoutes = (req, res, next) => {
   })
 }
 
-exports.getRouteById = (req, res, next) => {}
+exports.getRouteById = (req, res, next) => {
+  console.log('in controller')
+  const { id } = req.params
+  selectRouteById(id)
+    .then((route) => {
+      res.status(200).send({ route })
+    })
+    .catch(next)
+}
 
-exports.postRoute = (req, res, next) => {}
+exports.postRoute = (req, res, next) => {
+  insertRoute(req.body)
+    .then((route) => {
+      res.status(201).send({ route })
+    })
+    .catch(next)
+}
 
 exports.deleteRoute = (req, res, next) => {}
 

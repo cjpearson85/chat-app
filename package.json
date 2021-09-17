@@ -21,10 +21,10 @@
   },
   "devDependencies": {
     "eslint": "^7.32.0",
+    "faker": "^5.5.3",
     "husky": "^7.0.2",
     "jest": "^27.1.1",
     "nodemon": "^2.0.12",
-    "supertest": "^6.1.6",
-    "faker": "^5.5.3"
+    "supertest": "^6.1.6"
   }
 }
