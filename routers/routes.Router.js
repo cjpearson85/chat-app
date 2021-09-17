@@ -7,6 +7,9 @@ const {
   getUserRoutes,
   patchRoute,
 } = require('../controllers/routesController')
+const {
+  getPois,
+} = require('../controllers/poiController')
 
 routesRouter
   .route('/')
@@ -22,5 +25,11 @@ routesRouter
   .get(getRouteById) // get route by id
   .patch(patchRoute) // update a route
   .delete(deleteRoute) // delete route from db
+
+routesRouter
+  .route('/:route_id/poi')
+  .get(getPois) // get route by id
+  // .patch(patchRoute) // update a route
+  // .delete(deleteRoute) // delete route from db
 
 module.exports = routesRouter
