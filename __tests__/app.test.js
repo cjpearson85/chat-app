@@ -188,7 +188,7 @@ describe('Poi', () => {
   describe('GET /routes/:route_id/poi', () => {
     it.only('should respond with relevant pois for a given route', async () => {
       const { body: { pois } } = await request.get('/api/routes/6143a704366e787fcfb34292/poi')
-      .expect(200)
+        .expect(200)
       expect(pois).toBeInstanceOf(Array)
       expect(pois.length).toBeGreaterThan(0)
       pois.forEach((poi) => {
@@ -199,6 +199,6 @@ describe('Poi', () => {
           })
         )
       })   
-    });
-  });
-});
+    })
+  })
+})
