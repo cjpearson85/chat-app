@@ -12,43 +12,8 @@ const {
 } = require('../schemas/index')
 const mongoose = require('mongoose')
 const setupTests = require('../setup-tests')
-// const testData = require('../db/data/test-data/index')
-
-// async function removeAllCollections () {
-//   const collections = Object.keys(mongoose.connection.collections)
-//   for (const collectionName of collections) {
-//     const collection = mongoose.connection.collections[collectionName]
-//     await collection.deleteMany()
-//   }
-// }
-
-// async function dropAllCollections () {
-//   const collections = Object.keys(mongoose.connection.collections)
-//   for (const collectionName of collections) {
-//     const collection = mongoose.connection.collections[collectionName]
-//     try {
-//       await collection.drop()
-//     } catch (error) {
-//       if (error.message === 'ns not found') return
-//       if (error.message.includes('a background operation is currently running')) return
-//       console.log(error.message)
-//     }
-//   }
-// }
-
-// async function seedAllCollections () {
-//   await mongoose.connection.models.User.insertMany(testData.users)
-//   await mongoose.connection.models.Route.insertMany(testData.routes)
-//   await mongoose.connection.models.Follow.insertMany(testData.follows)
-//   await mongoose.connection.models.Poi.insertMany(testData.pois)
-//   await mongoose.connection.models.RouteLike.insertMany(testData.routeLikes)
-//   await mongoose.connection.models.CommentLike.insertMany(testData.commentLikes)
-// }
-
-// beforeAll(async () => {
-//   const url = `mongodb://127.0.0.1/test`
-//   await mongoose.connect(url)
-// })
+const testCoords = require('../db/data/gpx/gpx1')
+const { parseStrava } = require('../utils')
 
 beforeEach(async () => {
   await setupTests.seedAllCollections()
@@ -63,9 +28,53 @@ afterAll(async () => {
   await mongoose.connection.close()
 })
 
-describe('Name of the group', () => {
-  it('should ', async () => {
-    const res = await request.get('/api/users')
-    expect(res.body.users).toEqual()
+describe('Users', () => {
+  describe('GET - /users', () => {
+    it('should ', async () => {
+      const res = await request.get('/api/users')
+      expect(res.body.users).toEqual()
+    })
+  })
+  describe('GET -/users/:username', () => {
+    it('should return a user profile', async () => {
+      const res = await request.get('/api/users/Shanna81')
+      expect(res.body.user.username).toEqual('Shanna81')
+    })
+  })
+})
+
+describe('Route', () => {
+  describe('GET - /routes', () => {
+    it('should get all routes', async () => {
+      const res = await request.get('/api/routes')
+      expect(res.body.routes).toEqual()
+    })
+  })
+  describe('GET -/routes/route_id', () => {
+    it.only('should get a single route by its id', async () => {
+      const res = await request
+        .get('/api/routes/6143a704366e787fcfb34285')
+        .expect(200)
+
+      expect(res).toEqual({})
+    })
+  })
+  describe('POST - /routes', () => {
+    it('should post a route', async () => {
+      const testRequest = {
+        title: 'My First Post',
+        description: 'my first walk',
+        user_id: '6143a704366e787fcfb34282',
+        coords: parseStrava(testCoords),
+        start_time_date: new Date(),
+      }
+
+      const res = await request
+        .post('/api/routes')
+        .send(testRequest)
+        .expect(201)
+
+      expect(res).toEqual({})
+    })
   })
 })
