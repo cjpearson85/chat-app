@@ -32,19 +32,19 @@ describe('Users', () => {
   describe('GET - /users', () => {
     it('should ', async () => {
       const { body: { users } } = await request.get('/api/users')
-      .expect(200)
-      expect(users).toBeInstanceOf(Array);
+        .expect(200)
+      expect(users).toBeInstanceOf(Array)
       expect(users.length).toBeGreaterThan(0)
       users.forEach((user) => {
-          expect(user).toEqual(
-              expect.objectContaining({
-              user_id: expect.any(String),
-              bio: expect.any(String),
-              avatar_url: expect.any(String),
-              username: expect.any(String),
-              })
-          );
-        });
+        expect(user).toEqual(
+          expect.objectContaining({
+            user_id: expect.any(String),
+            bio: expect.any(String),
+            avatar_url: expect.any(String),
+            username: expect.any(String),
+          })
+        )
+      })
     })
   })
   describe('GET -/users/:username', () => {
@@ -59,34 +59,34 @@ describe('Route', () => {
   describe('GET - /routes', () => {
     it('should get all routes', async () => {
       const { body: { routes } } = await request.get('/api/routes')
-      .expect(200)
-      expect(routes).toBeInstanceOf(Array);
+        .expect(200)
+      expect(routes).toBeInstanceOf(Array)
       expect(routes.length).toBeGreaterThan(0)
       routes.forEach((route) => {
-          expect(route).toEqual(
-              expect.objectContaining({
-                _id: expect.any(String),
-                title: expect.any(String),
-                description: expect.any(String),
-                user_id: expect.any(String),
-                coords: expect.any(Array),
-                start_time_date: expect.any(String)
-              })
-          );
-        });    
-      })
+        expect(route).toEqual(
+          expect.objectContaining({
+            _id: expect.any(String),
+            title: expect.any(String),
+            description: expect.any(String),
+            user_id: expect.any(String),
+            coords: expect.any(Array),
+            start_time_date: expect.any(String)
+          })
+        )
+      })    
+    })
     it('a route should contain valid coords', async () => {
       const { body: { routes } } = await request.get('/api/routes')
-      .expect(200)
+        .expect(200)
       routes[0].coords.forEach(coord => {
         expect(coord).toEqual(
           expect.objectContaining({
             longitude: expect.any(String),
             latitude: expect.any(String),
             time: expect.any(String),
-        }))
+          }))
       }) 
-      })
+    })
 
   })
   describe('GET -/routes/route_id', () => {
@@ -102,7 +102,7 @@ describe('Route', () => {
           description: 'Porro et ea perspiciatis quibusdam. Repellendus omnis sunt magnam ipsum.',
           coords: expect.any(Array),
           start_time_date: '2018-10-02T08:37:14.590Z'
-          })
+        })
       )
     })
   })
@@ -127,7 +127,7 @@ describe('Route', () => {
           user_id: '6143a704366e787fcfb34282',
           coords: expect.any(Array),
           start_time_date: expect.any(String)
-          })
+        })
       )
     })
     it('reject with 400 given a request with missing title', async () => {
@@ -142,7 +142,7 @@ describe('Route', () => {
         .send(testRequest)
         .expect(400)
       expect(res.body.msg).toBe('Bad request')
-    });
+    })
     it('reject with 400 given a request with missing coordinates', async () => {
       const testRequest = {
         title: 'My First Post',
@@ -155,7 +155,7 @@ describe('Route', () => {
         .send(testRequest)
         .expect(400)
       expect(res.body.msg).toBe('Bad request')
-    });
+    })
     it('reject with 400 given a request with missing user_id', async () => {
       const testRequest = {
         title: 'My First Post',
@@ -168,7 +168,7 @@ describe('Route', () => {
         .send(testRequest)
         .expect(400)
       expect(res.body.msg).toBe('Bad request')
-    });
+    })
     it('reject with 400 given a request with missing start_time', async () => {
       const testRequest = {
         title: 'My First Post',
@@ -181,6 +181,6 @@ describe('Route', () => {
         .send(testRequest)
         .expect(400)
       expect(res.body.msg).toBe('Bad request')
-    });
+    })
   })
 })
