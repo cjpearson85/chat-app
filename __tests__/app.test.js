@@ -53,10 +53,10 @@ describe('Route', () => {
   describe('GET -/routes/route_id', () => {
     it.only('should get a single route by its id', async () => {
       const res = await request
-        .get('/api/routes/6143a704366e787fcfb34285')
+        .get('/api/routes/6143a704366e787fcfb34286')
         .expect(200)
 
-      expect(res).toEqual({})
+      expect(res.body).toEqual({})
     })
   })
   describe('POST - /routes', () => {

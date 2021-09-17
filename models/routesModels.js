@@ -27,7 +27,7 @@ exports.insertRoute = async ({
 }
 
 exports.selectRouteById = async (id) => {
-  console.log('in model')
-  const result = await Route.findOne({ _id: id })
+
+  const result = await Route.findOne({ _id: `${id}` })
   return result
 }

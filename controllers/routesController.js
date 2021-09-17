@@ -5,15 +5,15 @@ const {
 } = require('../models/routesModels')
 
 exports.getRoutes = (req, res, next) => {
-  selectAllRoutes.then((routes) => {
+  selectAllRoutes().then((routes) => {
     res.status(200).send({ routes })
-  })
+  }).catch(next)
 }
 
 exports.getRouteById = (req, res, next) => {
-  console.log('in controller')
-  const { id } = req.params
-  selectRouteById(id)
+  console.log('in here controller')
+  const { route_id } = req.params
+  selectRouteById(route_id)
     .then((route) => {
       res.status(200).send({ route })
     })

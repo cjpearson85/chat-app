@@ -9,7 +9,6 @@ if (ENV === 'test') {
       useUnifiedTopology: true,
     })
     .then(() => {
-      console.log('connected to test db')
     })
     .catch((err) => console.log(err))
 } else {
@@ -19,7 +18,6 @@ if (ENV === 'test') {
       useUnifiedTopology: true,
     })
     .then(() => {
-      console.log('connected to dev db')
     })
     .catch((err) => console.log(err))
 }
