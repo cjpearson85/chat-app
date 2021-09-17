@@ -13,7 +13,10 @@ if (ENV === 'test') {
     .catch((err) => console.log(err))
 } else {
   db = mongoose
-    .connect(devDb, { useNewUrlParser: true, useUnifiedTopology: true })
+    .connect(process.env.MONGO_URI_DEV, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
     .then(() => {
       console.log('connected to dev db')
     })
