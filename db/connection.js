@@ -6,7 +6,10 @@ const testDb = require('../testDbUri')
 let db
 if (ENV === 'test') {
   db = mongoose
-    .connect(testDb, { useNewUrlParser: true, useUnifiedTopology: true })
+    .connect('mongodb://127.0.0.1/test', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
     .then(() => {
       console.log('connected to test db')
     })

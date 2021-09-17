@@ -1,7 +1,15 @@
 const app = require('../app')
 const supertest = require('supertest')
 const request = supertest(app)
-const {Route, Comment, User, Follow, Poi, CommentLike, RouteLike} = require('../schemas/index')
+const {
+  Route,
+  Comment,
+  User,
+  Follow,
+  Poi,
+  CommentLike,
+  RouteLike,
+} = require('../schemas/index')
 const mongoose = require('mongoose')
 const setupTests = require('../setup-tests')
 // const testData = require('../db/data/test-data/index')
@@ -37,10 +45,10 @@ const setupTests = require('../setup-tests')
 //   await mongoose.connection.models.CommentLike.insertMany(testData.commentLikes)
 // }
 
-beforeAll(async () => {
-  const url = `mongodb://127.0.0.1/test`
-  await mongoose.connect(url)
-})
+// beforeAll(async () => {
+//   const url = `mongodb://127.0.0.1/test`
+//   await mongoose.connect(url)
+// })
 
 beforeEach(async () => {
   await setupTests.seedAllCollections()

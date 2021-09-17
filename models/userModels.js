@@ -1,5 +1,6 @@
 const User = require('../schemas/user')
 const mongoose = require('mongoose')
+const db = require('../db/connection')
 
 exports.selectAllUsers = async () => {
   console.log('inside user model')
