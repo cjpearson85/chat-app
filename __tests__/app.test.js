@@ -131,14 +131,14 @@ describe('Users', () => {
           expect(user.body.user.username).toEqual(update.username)
         })
     })
-    it('should respond with 404 is user doesnt exist', async () => {
+    it('should respond with 400 is user does not exist', async () => {
       const update = { bio: 'will this test bio update' }
       const result = await request
         .patch('/api/users/ant')
         .send(update)
-        .expect(404)
+        .expect(400)
         .then((user) => {
-          expect(user.body.user.bio).toEqual(update.bio)
+          expect(user.body.msg).toEqual('Bad request')
         })
     })
   })
