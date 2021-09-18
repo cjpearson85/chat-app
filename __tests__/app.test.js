@@ -142,7 +142,7 @@ describe('Users', () => {
         })
     })
   })
-  describe.only('DELETE - /users/:user_id', () => {
+  describe('DELETE - /users/:user_id', () => {
     it('should delete user when passed a user_id', async () => {
       const result = await request
         .delete('/api/users/6143a704366e787fcfb34282')
@@ -440,6 +440,28 @@ describe('Route', () => {
         body: { msg },
       } = await request.post('/api/routes').send(testReq).expect(400)
       expect(msg).toBe('Bad request')
+    })
+  })
+  describe('PATCH - /routes/:routes_id', () => {
+    it('should update a route with new info', async () => {
+      const update = { title: 'My New Title' }
+      const result = await request
+        .patch('/api/routes/6143a704366e787fcfb34286')
+        .send(update)
+        .expect(200)
+        .then((route) => {
+          expect(route.body.route.title).toEqual(update.title)
+        })
+    })
+    it('should respond with 400 if route does not exist', async () => {
+      const update = { title: 'My New Title' }
+      const result = await request
+        .patch('/api/routes/antsRoute')
+        .send(update)
+        .expect(400)
+        .then((user) => {
+          expect(user.body.msg).toEqual('Bad request')
+        })
     })
   })
 })
