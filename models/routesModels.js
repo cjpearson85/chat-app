@@ -47,15 +47,15 @@ exports.insertRoute = async ({
   coords,
   start_time_date,
 }) => {
-  if (!coords) {
+  if (!coords || !user_id || !title || !start_time_date) {
     return Promise.reject({status: 400, msg: 'Bad request'})
   }
   const route = new Route({
-    title: title,
-    description: description,
-    user_id: user_id,
-    coords: coords,
-    start_time_date: start_time_date,
+    title,
+    description,
+    user_id,
+    coords,
+    start_time_date,
   })
   const result = await route.save()
   return result

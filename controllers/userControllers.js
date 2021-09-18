@@ -2,6 +2,8 @@ const {
   selectUsers,
   selectUserById,
   updateUserById,
+  insertUser,
+  login,
 } = require('../models/userModels')
 
 exports.getUsers = (req, res, next) => {
@@ -25,4 +27,20 @@ exports.patchUserById = (req, res, next) => {
   updateUserById(user_id, body).then((user) => {
     res.status(200).send({ user })
   })
+}
+
+exports.postUser = (req, res, next) => {
+  insertUser(req.body)
+    .then((user) => {
+      res.status(201).send({ user })
+    })
+    .catch(next)
+}
+
+exports.postLogin = (req, res, next) => {
+  login(req.body)
+    .then((msg) => {
+      res.status(200).send(msg)
+    })
+    .catch(next)
 }
