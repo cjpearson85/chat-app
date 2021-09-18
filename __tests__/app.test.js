@@ -72,6 +72,14 @@ describe('Users', () => {
       expect(page).toBe(1)
       expect(totalPages).toBe(5)
     })
+    it('if limit is 0, do not paginate', async () => {
+      const { body: { users, page, totalPages, totalDocs } } 
+        = await request.get('/api/users?&limit=0')
+          .expect(200)
+      expect(users).toHaveLength(15)
+      expect(page).toBe(1)
+      expect(totalPages).toBe(1)
+    })
     it('responds with 404 if no results on given page', async () => {
       const { body: { msg } } = await request
         .get('/api/users?page=200')
@@ -97,10 +105,65 @@ describe('Users', () => {
   })
   describe('POST - /login', () => {
     
-  });
+  })
   describe('POST - /signup', () => {
-    
-  });
+    it('should add a user and respond with added user', async () => {
+      const testReq = { 
+        "username": "sonic_hedgehog",
+        "name": "Joe Warburton",
+        "bio": "just a hedgehog",
+        "avatar_url": "http://img.url",
+        "password": "pizza"
+      }
+      const { body: { user } } = await request
+        .post('/api/signup')
+        .expect(201)
+        .send(testReq)
+      expect(user).toEqual(
+        expect.objectContaining({
+          username: 'sonic_hedgehog',
+          avatar_url: 'http://img.url',
+          name: 'Joe Warburton',
+          "bio": "just a hedgehog",
+        })
+      )
+    })
+  })
+  it.only('should detect a taken username', async () => {
+    const testReq = { 
+      username: 'sonic_hedgehog',
+      name: 'Joe Warburton',
+      avatar_url: 'http://img.url',
+      password: 'pizza'
+    }
+    await request
+      .post('/api/signup')
+      .expect(201)
+      .send(testReq)
+    const testReq2 = {
+      username: 'sonic_hedgehog',
+      name: 'JW',
+      avatar_url: 'http://img2.url',
+      password: 'calzone'
+    }
+    const { body: { msg } } = await request 
+      .post('/api/signup')
+      .expect(400)
+      .send(testReq2)
+    expect(msg).toBe('Username is taken')
+  })
+  xit('missing fields on request, 400', async () => {
+    const testReq = {
+      username: 'sonic_hedgehog',
+      avatar_url: 'http://img2.url',
+      password: 'calzone'
+    }
+    const { body: { msg } } = await request 
+      .post('/api/users/signup')
+      .expect(400)
+      .send(testReq)
+    expect(msg).toBe('Bad request - missing field(s)')
+  })
 })
 describe('Route', () => {
   describe('GET - /routes', () => {
@@ -187,12 +250,12 @@ describe('Route', () => {
     })
     it('default sort is by route start time descending', async () => {
       const { body: { routes } } = await request.get('/api/routes')
-      .expect(200)
+        .expect(200)
       expect(routes).toBeSortedBy('start_time_date', {descending: true})
     })
     it('given order "asc", default sort is by route start time ascending', async () => {
       const { body: { routes } } = await request.get('/api/routes?order=asc')
-      .expect(200)
+        .expect(200)
       expect(routes).toBeSortedBy('start_time_date', {ascending: true})
     })
   })
