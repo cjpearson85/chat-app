@@ -103,17 +103,13 @@ describe('Users', () => {
       )
     })
   })
-  describe('POST - /login', () => {
-    
-  })
   describe('POST - /signup', () => {
-    it('should add a user and respond with added user', async () => {
+    it('should create a user', async () => {
       const testReq = { 
-        "username": "sonic_hedgehog",
-        "name": "Joe Warburton",
-        "bio": "just a hedgehog",
-        "avatar_url": "http://img.url",
-        "password": "pizza"
+        username: 'sonic_hedgehog',
+        name: 'Joe Warburton',
+        avatar_url: 'http://img.url',
+        password: 'pizza'
       }
       const { body: { user } } = await request
         .post('/api/signup')
@@ -124,45 +120,96 @@ describe('Users', () => {
           username: 'sonic_hedgehog',
           avatar_url: 'http://img.url',
           name: 'Joe Warburton',
-          "bio": "just a hedgehog",
         })
       )
     })
+    it('should detect a taken username', async () => {
+      const testReq = { 
+        username: 'sonic_hedgehog',
+        name: 'Joe Warburton',
+        avatar_url: 'http://img.url',
+        password: 'pizza'
+      }
+      await request
+        .post('/api/signup')
+        .expect(201)
+        .send(testReq)
+      const testReq2 = {
+        username: 'sonic_hedgehog',
+        name: 'JW',
+        avatar_url: 'http://img2.url',
+        password: 'calzone'
+      }
+      const { body: { msg } } = await request 
+        .post('/api/signup')
+        .expect(400)
+        .send(testReq2)
+      expect(msg).toBe('Username is taken')
+    })
+    it('missing fields on request, 400', async () => {
+      const testReq = {
+        username: 'sonic_hedgehog',
+      }
+      const { body: { msg } } = await request 
+        .post('/api/signup')
+        .expect(400)
+        .send(testReq)
+      expect(msg).toBe('Bad request')
+    })
   })
-  it.only('should detect a taken username', async () => {
-    const testReq = { 
-      username: 'sonic_hedgehog',
-      name: 'Joe Warburton',
-      avatar_url: 'http://img.url',
-      password: 'pizza'
-    }
-    await request
-      .post('/api/signup')
-      .expect(201)
-      .send(testReq)
-    const testReq2 = {
-      username: 'sonic_hedgehog',
-      name: 'JW',
-      avatar_url: 'http://img2.url',
-      password: 'calzone'
-    }
-    const { body: { msg } } = await request 
-      .post('/api/signup')
-      .expect(400)
-      .send(testReq2)
-    expect(msg).toBe('Username is taken')
-  })
-  xit('missing fields on request, 400', async () => {
-    const testReq = {
-      username: 'sonic_hedgehog',
-      avatar_url: 'http://img2.url',
-      password: 'calzone'
-    }
-    const { body: { msg } } = await request 
-      .post('/api/users/signup')
-      .expect(400)
-      .send(testReq)
-    expect(msg).toBe('Bad request - missing field(s)')
+  describe.only('POST - /login', () => {
+    it('should log in a user with correct password', async () => {
+      const testUser = { 
+        username: 'logic1000',
+        name: 'Susanne Kraft',
+        avatar_url: 'http://img.url',
+        password: 'octopus'
+      }
+      await request
+        .post('/api/signup')
+        .send(testUser)
+        .expect(201)
+      const testLogin = {
+        username: 'logic1000',
+        password: 'octopus',
+      }
+      const { body: { msg } } = await request
+        .post('/api/login')
+        .send(testLogin)
+        .expect(200)
+      expect(msg).toBe('Logged in')
+
+    })
+    it('should refuse login with incorrect password, 401 unauthorised', async () => {
+      const testUser = { 
+        username: 'logic1000',
+        name: 'Susanne Kraft',
+        avatar_url: 'http://img.url',
+        password: 'octopus'
+      }
+      await request
+        .post('/api/signup')
+        .send(testUser)
+      const testLogin = {
+        username: 'logic1000',
+        password: 'squid',
+      }
+      const { body: { msg } } = await request
+        .post('/api/login')
+        .send(testLogin)
+        .expect(401)
+      expect(msg).toBe('Incorrect password')
+    })
+    it('missing fields on request, 400', async () => {
+      const testReq = {
+        password: 'calzone'
+      }
+      const { body: { msg } } = await request 
+        .post('/api/login')
+        .expect(400)
+        .send(testReq)
+      expect(msg).toBe('Bad request')
+    })
   })
 })
 describe('Route', () => {
@@ -369,6 +416,13 @@ describe('Poi', () => {
           })
         )
       })   
+    })
+  })
+  describe('POST - /routes/:route_id/poi', () => {
+    it('should post a point of interest', () => {
+      const testReq = {
+        
+      }
     })
   })
 })

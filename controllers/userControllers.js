@@ -31,8 +31,8 @@ exports.postUser = (req, res, next) => {
 
 exports.postLogin = (req, res, next) => {
   login(req.body)
-    .then(() => {
-      res.status(200).send()
+    .then((msg) => {
+      res.status(200).send(msg)
     })
     .catch(next)
 }

@@ -68,11 +68,8 @@ exports.insertUser = async ({
   if (!username || !password) {
     return Promise.reject({status: 400, msg: 'Bad request'})
   }
-  const users = await User.find({})
-    .select('username')
-
-  if (users.map(user => user.username)
-    .includes(username)) {
+  const existingUser = await User.findOne({ username })
+  if (existingUser) {
     return Promise.reject({status: 400, msg: 'Username is taken'})
   }
 
@@ -91,5 +88,17 @@ exports.insertUser = async ({
 }
 
 exports.login = async ({username, password}) => {
-
+  if (!username || ! password) {
+    return Promise.reject({status: 400, msg: 'Bad request'})
+  }
+  const userDetails = await User.findOne({ username })
+    .select('hash salt')
+  if (!userDetails) {
+    return Promise.reject({status: 400, msg: 'Username not found'})
+  }
+  if (!validPassword(password, userDetails.hash, userDetails.salt)) {
+    return Promise.reject({status: 401, msg: 'Incorrect password'})
+  } else {
+    return { msg: 'Logged in' }
+  }
 }
