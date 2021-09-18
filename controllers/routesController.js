@@ -8,7 +8,7 @@ exports.getRoutes = (req, res, next) => {
   selectRoutes(req.query)
     .then((routes) => {
       res.status(200)
-      .send(routes)
+        .send(routes)
     })
     .catch(next)
 }

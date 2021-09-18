@@ -12,7 +12,7 @@ exports.selectRoutes = async (queries) => {
   } = queries
 
   if (!['start_time_date', 'likes']
-        .includes(sort_by) || 
+    .includes(sort_by) || 
       !['asc', 'desc'].includes(order) ||
       !Number.isInteger(parseInt(limit)) ||
       !Number.isInteger(parseInt(page))) {

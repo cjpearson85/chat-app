@@ -1,6 +1,6 @@
 const {
   selectUsers,
-  selectUserByUsername,
+  selectUserById,
 } = require('../models/userModels')
 
 exports.getUsers = (req, res, next) => {
@@ -11,9 +11,10 @@ exports.getUsers = (req, res, next) => {
     .catch(next)
 }
 
-exports.getUserByUsername = (req, res, next) => {
-  const { username } = req.params
-  selectUserByUsername(username).then((user) => {
-    res.status(200).send({ user })
+exports.getUserById = (req, res, next) => {
+  const { user_id } = req.params
+  selectUserById(user_id)
+    .then((user) => {
+      res.status(200).send({ user })
   })
 }

@@ -29,7 +29,7 @@ afterAll(async () => {
 })
 
 describe('Users', () => {
-  describe.only('GET - /users', () => {
+  describe('GET - /users', () => {
     it('should return all users', async () => {
       const { body: { users } } = await request.get('/api/users')
         .expect(200)
@@ -73,13 +73,20 @@ describe('Users', () => {
     expect(totalPages).toBe(5)
     })
     it('default sort is by user creation time descending', () => {
-      // TEST HERE
+      // TEST HERE after doing post user
     });
   })
-  describe('GET -/users/:username', () => {
+  describe.only('GET -/users/:user_id', () => {
     it('should return a user profile', async () => {
-      const res = await request.get('/api/users/Shanna81')
-      expect(res.body.user.username).toEqual('Shanna81')
+      const { body: { user } } = await request.get('/api/users/6143a704366e787fcfb34282')
+      expect(user).toEqual(
+        expect.objectContaining({
+          _id: '6143a704366e787fcfb34282',
+          bio: expect.any(String),
+          avatar_url: expect.any(String),
+          username: 'Shanna81'
+        })
+      )
     })
   })
 })
@@ -115,7 +122,10 @@ describe('Route', () => {
           }))
       }) 
     })
-
+    it('should query by user', async () => {
+      const { body: { routes } } = await request.get('/api/routes')
+      .expect(200)
+    });
   })
   describe('GET -/routes/route_id', () => {
     it('should get a single route by its id', async () => {

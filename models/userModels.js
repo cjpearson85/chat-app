@@ -30,14 +30,9 @@ exports.selectUsers = async (queries) => {
   }
 }
 
-exports.selectUserByUsername = async (username) => {
-  const result = await User.find({ username: `${username}` })
-  let returnUser = {
-    user_id: result[0]._id,
-    name: result[0].name,
-    bio: result[0].bio,
-    avatar_url: result[0].avatar_url,
-    username: result[0].username,
-  }
-  return returnUser
+exports.selectUserById = async (user_id) => {
+  const result = await User.findOne(
+    { _id: user_id })
+      .select('user_id name bio avatar_url username')
+  return result
 }
