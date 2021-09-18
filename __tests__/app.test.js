@@ -72,6 +72,14 @@ describe('Users', () => {
       expect(page).toBe(1)
       expect(totalPages).toBe(5)
     })
+    it('if limit is 0, do not paginate', async () => {
+      const { body: { users, page, totalPages, totalDocs } } 
+        = await request.get('/api/users?&limit=0')
+          .expect(200)
+      expect(users).toHaveLength(15)
+      expect(page).toBe(1)
+      expect(totalPages).toBe(1)
+    })
     it('responds with 404 if no results on given page', async () => {
       const { body: { msg } } = await request
         .get('/api/users?page=200')
@@ -95,12 +103,114 @@ describe('Users', () => {
       )
     })
   })
-  describe('POST - /login', () => {
-    
-  });
   describe('POST - /signup', () => {
-    
-  });
+    it('should create a user', async () => {
+      const testReq = { 
+        username: 'sonic_hedgehog',
+        name: 'Joe Warburton',
+        avatar_url: 'http://img.url',
+        password: 'pizza'
+      }
+      const { body: { user } } = await request
+        .post('/api/signup')
+        .expect(201)
+        .send(testReq)
+      expect(user).toEqual(
+        expect.objectContaining({
+          username: 'sonic_hedgehog',
+          avatar_url: 'http://img.url',
+          name: 'Joe Warburton',
+        })
+      )
+    })
+    it('should detect a taken username', async () => {
+      const testReq = { 
+        username: 'sonic_hedgehog',
+        name: 'Joe Warburton',
+        avatar_url: 'http://img.url',
+        password: 'pizza'
+      }
+      await request
+        .post('/api/signup')
+        .expect(201)
+        .send(testReq)
+      const testReq2 = {
+        username: 'sonic_hedgehog',
+        name: 'JW',
+        avatar_url: 'http://img2.url',
+        password: 'calzone'
+      }
+      const { body: { msg } } = await request 
+        .post('/api/signup')
+        .expect(400)
+        .send(testReq2)
+      expect(msg).toBe('Username is taken')
+    })
+    it('missing fields on request, 400', async () => {
+      const testReq = {
+        username: 'sonic_hedgehog',
+      }
+      const { body: { msg } } = await request 
+        .post('/api/signup')
+        .expect(400)
+        .send(testReq)
+      expect(msg).toBe('Bad request')
+    })
+  })
+  describe('POST - /login', () => {
+    it('should log in a user with correct password', async () => {
+      const testUser = { 
+        username: 'logic1000',
+        name: 'Susanne Kraft',
+        avatar_url: 'http://img.url',
+        password: 'octopus'
+      }
+      await request
+        .post('/api/signup')
+        .send(testUser)
+        .expect(201)
+      const testLogin = {
+        username: 'logic1000',
+        password: 'octopus',
+      }
+      const { body: { msg } } = await request
+        .post('/api/login')
+        .send(testLogin)
+        .expect(200)
+      expect(msg).toBe('Logged in')
+
+    })
+    it('should refuse login with incorrect password, 401 unauthorised', async () => {
+      const testUser = { 
+        username: 'logic1000',
+        name: 'Susanne Kraft',
+        avatar_url: 'http://img.url',
+        password: 'octopus'
+      }
+      await request
+        .post('/api/signup')
+        .send(testUser)
+      const testLogin = {
+        username: 'logic1000',
+        password: 'squid',
+      }
+      const { body: { msg } } = await request
+        .post('/api/login')
+        .send(testLogin)
+        .expect(401)
+      expect(msg).toBe('Incorrect password')
+    })
+    it('missing fields on request, 400', async () => {
+      const testReq = {
+        password: 'calzone'
+      }
+      const { body: { msg } } = await request 
+        .post('/api/login')
+        .expect(400)
+        .send(testReq)
+      expect(msg).toBe('Bad request')
+    })
+  })
 })
 describe('Route', () => {
   describe('GET - /routes', () => {
@@ -187,12 +297,12 @@ describe('Route', () => {
     })
     it('default sort is by route start time descending', async () => {
       const { body: { routes } } = await request.get('/api/routes')
-      .expect(200)
+        .expect(200)
       expect(routes).toBeSortedBy('start_time_date', {descending: true})
     })
     it('given order "asc", default sort is by route start time ascending', async () => {
       const { body: { routes } } = await request.get('/api/routes?order=asc')
-      .expect(200)
+        .expect(200)
       expect(routes).toBeSortedBy('start_time_date', {ascending: true})
     })
   })
@@ -306,6 +416,90 @@ describe('Poi', () => {
           })
         )
       })   
+    })
+  })
+  describe('POST - /routes/:route_id/poi', () => {
+    it('should post a point of interest', async () => {
+      const testReq = {
+        user_id: '6143a704366e787fcfb34278',
+        photo: 'http://example.com',
+        narration: 'what an interesting place!',
+        coords: {"latitude":"53.5645390","longitude":"-1.4798400","time":"2019-01-22T18:33:09Z"}
+      }
+      const { body: { poi } } = await request
+        .post('/api/routes/6143a704366e787fcfb34286/poi')
+        .send(testReq)
+        .expect(201)
+      expect(poi).toEqual(
+        expect.objectContaining({
+          route_id: '6143a704366e787fcfb34286',
+          _id: expect.any(String),
+          photo: 'http://example.com',
+          narration: 'what an interesting place!',
+          user_id: '6143a704366e787fcfb34278',
+          coords: expect.objectContaining({
+            latitude: 53.5645390,
+            longitude: -1.4798400,
+            time: "2019-01-22T18:33:09.000Z"
+          })
+        })
+      )
+    })
+    it('missing field, 400 bad request', async () => {
+      const testReq = {
+        user_id: '6143a704366e787fcfb34278',
+        photo: 'http://example.com',
+        narration: 'what an interesting place!',
+      }
+      const { body: { msg } } = await request
+        .post('/api/routes/6143a704366e787fcfb34286/poi')
+        .send(testReq)
+        .expect(400)
+      expect(msg).toBe('Bad request')
+    })
+  })
+})
+describe('Comments', () => {
+  describe('GET - /routes/:route_id/comments', () => {
+    it('should respond with relevant comments for a given route', async () => {
+      const { body: { comments } } = await request
+        .get('/api/routes/6143a704366e787fcfb3428f/comments')
+        .expect(200)
+      expect(comments).toBeInstanceOf(Array)
+      expect(comments.length).toBeGreaterThan(0)
+      comments.forEach((comment) => {
+        expect(comment).toEqual(
+          expect.objectContaining({
+            _id: expect.any(String),
+            route_id: '6143a704366e787fcfb3428f',
+            user_id: expect.any(String),
+            body: expect.any(String),
+            likes: expect.any(Number),
+            createdAt: expect.any(String)
+          })
+        )
+      })   
+    })
+  })
+  describe('POST - /routes/:route_id/comments', () => {
+    it('should add a comment to a route', async () => {
+      const testReq = {
+        user_id: '6143a704366e787fcfb34276',
+        body: 'here is what I think'
+      }
+      const { body: { comment } } = await request
+        .post('/api/routes/6143a704366e787fcfb3428f/comments')
+        .send(testReq)
+        .expect(201)
+      expect(comment).toEqual(
+        expect.objectContaining({
+          user_id: '6143a704366e787fcfb34276',
+          body: 'here is what I think',
+          likes: 0,
+          createdAt: expect.any(String),
+          route_id: '6143a704366e787fcfb3428f'
+        })
+      )
     })
   })
 })

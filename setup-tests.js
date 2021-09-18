@@ -29,6 +29,7 @@ async function seedAllCollections () {
   await mongoose.connection.models.Route.insertMany(testData.routes)
   await mongoose.connection.models.Follow.insertMany(testData.follows)
   await mongoose.connection.models.Poi.insertMany(testData.pois)
+  await mongoose.connection.models.Comment.insertMany(testData.comments)
   await mongoose.connection.models.RouteLike.insertMany(testData.routeLikes)
   await mongoose.connection.models.CommentLike.insertMany(testData.commentLikes)
 }
