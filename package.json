@@ -14,7 +14,9 @@
   "author": "",
   "license": "ISC",
   "jest": {
-    "setupFilesAfterEnv": ["jest-sorted"]
+    "setupFilesAfterEnv": [
+      "jest-sorted"
+    ]
   },
   "dependencies": {
     "cors": "^2.8.5",
