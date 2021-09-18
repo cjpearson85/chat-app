@@ -464,6 +464,21 @@ describe('Route', () => {
         })
     })
   })
+  describe('DELETE - /routes/:route_id', () => {
+    it('should remove a route from the db when passed a route_id', async () => {
+      const result = await request
+        .delete('/api/routes/6143a704366e787fcfb34286')
+        .expect(204)
+    })
+    it('should return a 404 if route does not exist', async () => {
+      const result = await request
+        .delete('/api/routes/ant')
+        .expect(400)
+        .then((user) => {
+          expect(user.body.msg).toEqual('Bad request')
+        })
+    })
+  })
 })
 describe('Poi', () => {
   describe('GET /routes/:route_id/poi', () => {

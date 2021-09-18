@@ -68,3 +68,8 @@ exports.updateRouteById = async (id, body) => {
   const result = await Route.findByIdAndUpdate(id, body, { new: true })
   return result
 }
+
+exports.removeRouteById = async (id) => {
+  const result = await Route.findByIdAndDelete(id)
+  return result
+}
