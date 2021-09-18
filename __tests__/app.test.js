@@ -106,7 +106,7 @@ describe('Users', () => {
       )
     })
   })
-  describe.only('POST - /users/:user_id', () => {
+  describe('PATCH - /users/:user_id', () => {
     it('should update and return a user profile', async () => {
       const update = { bio: 'will this test bio update' }
       const result = await request
@@ -142,8 +142,6 @@ describe('Users', () => {
         })
     })
   })
-  describe('POST - /login', () => {})
-  describe('POST - /signup', () => {})
   describe('POST - /signup', () => {
     it('should create a user', async () => {
       const testReq = {
