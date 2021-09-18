@@ -2,9 +2,42 @@ const Route = require('../schemas/route')
 const mongoose = require('mongoose')
 const db = require('../db/connection')
 
-exports.selectAllRoutes = async () => {
-  const result = await Route.find({})
-  return result
+exports.selectRoutes = async (queries) => {
+  const {
+    sort_by = 'start_time_date',
+    order = 'desc',
+    limit = 5,
+    page = 1,
+    user_id
+  } = queries
+
+  if (!['start_time_date', 'likes']
+    .includes(sort_by) || 
+      !['asc', 'desc'].includes(order) ||
+      !Number.isInteger(parseInt(limit)) ||
+      !Number.isInteger(parseInt(page))) {
+    return Promise.reject({status: 400, msg: 'Bad request - invalid sort'})
+  }
+
+  const query = user_id? {user_id} : {}
+  
+  const result = await Route.paginate(
+    query,
+    {
+      sort: (order === 'desc' ? '-' : '') + sort_by,
+      offset: (page - 1) * limit,
+      limit
+    }
+  )
+  if (page > result.totalPages) {
+    return Promise.reject({status: 404, msg: 'Resource not found'})
+  }
+  return {
+    routes: result.docs,
+    totalPages: result.totalPages,
+    page: result.page,
+    totalResults: result.totalDocs
+  }
 }
 
 exports.insertRoute = async ({

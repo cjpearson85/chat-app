@@ -30,7 +30,7 @@ afterAll(async () => {
 
 describe('Users', () => {
   describe('GET - /users', () => {
-    it('should ', async () => {
+    it('should return all users', async () => {
       const { body: { users } } = await request.get('/api/users')
         .expect(200)
       expect(users).toBeInstanceOf(Array)
@@ -38,7 +38,7 @@ describe('Users', () => {
       users.forEach((user) => {
         expect(user).toEqual(
           expect.objectContaining({
-            user_id: expect.any(String),
+            _id: expect.any(String),
             bio: expect.any(String),
             avatar_url: expect.any(String),
             username: expect.any(String),
@@ -46,15 +46,62 @@ describe('Users', () => {
         )
       })
     })
-  })
-  describe('GET -/users/:username', () => {
-    it('should return a user profile', async () => {
-      const res = await request.get('/api/users/Shanna81')
-      expect(res.body.user.username).toEqual('Shanna81')
+    it('paginated by default 10 results', async () => {
+      const { body: { users, page, totalPages, totalResults } } 
+        = await request.get('/api/users')
+          .expect(200)
+      expect(users).toHaveLength(10)
+      expect(page).toBe(1)
+      expect(totalPages).toBe(2)
+      expect(totalResults).toBe(15)
+    })
+    it('page query', async () => {
+      const { body: { users, page, totalPages, totalResults } } 
+        = await request.get('/api/users?page=2')
+          .expect(200)
+      expect(users).toHaveLength(5)
+      expect(page).toBe(2)
+      expect(totalPages).toBe(2)
+      expect(totalResults).toBe(15)
+    })
+    it('custom limit', async () => {
+      const { body: { users, page, totalPages } } 
+        = await request.get('/api/users?&limit=3')
+          .expect(200)
+      expect(users).toHaveLength(3)
+      expect(page).toBe(1)
+      expect(totalPages).toBe(5)
+    })
+    it('responds with 404 if no results on given page', async () => {
+      const { body: { msg } } = await request
+        .get('/api/users?page=200')
+        .expect(404)
+      expect(msg).toBe('Resource not found')
+    })
+    it('default sort is by user creation time descending', () => {
+      // TEST HERE after doing post user
     })
   })
+  describe('GET -/users/:user_id', () => {
+    it('should return a user profile', async () => {
+      const { body: { user } } = await request.get('/api/users/6143a704366e787fcfb34282')
+      expect(user).toEqual(
+        expect.objectContaining({
+          _id: '6143a704366e787fcfb34282',
+          bio: expect.any(String),
+          avatar_url: expect.any(String),
+          username: 'Shanna81'
+        })
+      )
+    })
+  })
+  describe('POST - /login', () => {
+    
+  });
+  describe('POST - /signup', () => {
+    
+  });
 })
-
 describe('Route', () => {
   describe('GET - /routes', () => {
     it('should get all routes', async () => {
@@ -87,15 +134,74 @@ describe('Route', () => {
           }))
       }) 
     })
-
+    it('should query by user_id', async () => {
+      const { body: { routes } } = await request
+        .get('/api/routes?user_id=6143a704366e787fcfb34278')
+        .expect(200)
+      expect(routes).toBeInstanceOf(Array)
+      expect(routes.length).toBeGreaterThan(0)
+      routes.forEach((route) => {
+        expect(route).toEqual(
+          expect.objectContaining({
+            _id: expect.any(String),
+            title: expect.any(String),
+            description: expect.any(String),
+            user_id: '6143a704366e787fcfb34278',
+            coords: expect.any(Array),
+            start_time_date: expect.any(String)
+          })
+        )
+      }) 
+    })
+    it('paginated by default 5 results', async () => {
+      const { body: { routes, page, totalPages, totalResults } } 
+        = await request.get('/api/routes')
+          .expect(200)
+      expect(routes).toHaveLength(5)
+      expect(page).toBe(1)
+      expect(totalPages).toBe(4)
+      expect(totalResults).toBe(20)
+    })
+    it('page query', async () => {
+      const { body: { routes, page, totalPages, totalResults } } 
+        = await request.get('/api/routes?page=2')
+          .expect(200)
+      expect(routes).toHaveLength(5)
+      expect(page).toBe(2)
+      expect(totalPages).toBe(4)
+      expect(totalResults).toBe(20)
+    })
+    it('custom limit', async () => {
+      const { body: { routes, page, totalPages } } 
+        = await request.get('/api/routes?&limit=3')
+          .expect(200)
+      expect(routes).toHaveLength(3)
+      expect(page).toBe(1)
+      expect(totalPages).toBe(7)
+    })
+    it('responds with 404 if no results on given page', async () => {
+      const { body: { msg } } = await request
+        .get('/api/routes?page=200')
+        .expect(404)
+      expect(msg).toBe('Resource not found')
+    })
+    it('default sort is by route start time descending', async () => {
+      const { body: { routes } } = await request.get('/api/routes')
+      .expect(200)
+      expect(routes).toBeSortedBy('start_time_date', {descending: true})
+    })
+    it('given order "asc", default sort is by route start time ascending', async () => {
+      const { body: { routes } } = await request.get('/api/routes?order=asc')
+      .expect(200)
+      expect(routes).toBeSortedBy('start_time_date', {ascending: true})
+    })
   })
   describe('GET -/routes/route_id', () => {
     it('should get a single route by its id', async () => {
-      const res = await request
+      const { body: { route } } = await request
         .get('/api/routes/6143a704366e787fcfb34286')
         .expect(200)
-
-      expect(res.body.route).toEqual(
+      expect(route).toEqual(
         expect.objectContaining({
           _id: '6143a704366e787fcfb34286',
           title: 'aut aut praesentium',
@@ -108,18 +214,19 @@ describe('Route', () => {
   })
   describe('POST - /routes', () => {
     it('should post a route', async () => {
-      const testRequest = {
+      const testDate = new Date()
+      const testReq = {
         title: 'My First Post',
         description: 'my first walk',
         user_id: '6143a704366e787fcfb34282',
         coords: parseStrava(testCoords),
-        start_time_date: new Date(),
+        start_time_date: testDate,
       }
-      const res = await request
+      const { body: { route } } = await request
         .post('/api/routes')
-        .send(testRequest)
+        .send(testReq)
         .expect(201)
-      expect(res.body.route).toEqual(
+      expect(route).toEqual(
         expect.objectContaining({
           _id: expect.any(String),
           title: 'My First Post',
@@ -131,62 +238,62 @@ describe('Route', () => {
       )
     })
     it('reject with 400 given a request with missing title', async () => {
-      const testRequest = {
+      const testReq = {
         description: 'my first walk',
         user_id: '6143a704366e787fcfb34282',
         coords: parseStrava(testCoords),
         start_time_date: new Date(),
       }
-      const res = await request
+      const { body: { msg } } = await request
         .post('/api/routes')
-        .send(testRequest)
+        .send(testReq)
         .expect(400)
-      expect(res.body.msg).toBe('Bad request')
+      expect(msg).toBe('Bad request')
     })
     it('reject with 400 given a request with missing coordinates', async () => {
-      const testRequest = {
+      const testReq = {
         title: 'My First Post',
         description: 'my first walk',
         user_id: '6143a704366e787fcfb34282',
         start_time_date: new Date(),
       }
-      const res = await request
+      const { body: { msg } } = await request
         .post('/api/routes')
-        .send(testRequest)
+        .send(testReq)
         .expect(400)
-      expect(res.body.msg).toBe('Bad request')
+      expect(msg).toBe('Bad request')
     })
     it('reject with 400 given a request with missing user_id', async () => {
-      const testRequest = {
+      const testReq = {
         title: 'My First Post',
         description: 'my first walk',
         coords: parseStrava(testCoords),
         start_time_date: new Date(),
       }
-      const res = await request
+      const { body: { msg } } = await request
         .post('/api/routes')
-        .send(testRequest)
+        .send(testReq)
         .expect(400)
-      expect(res.body.msg).toBe('Bad request')
+      expect(msg).toBe('Bad request')
     })
     it('reject with 400 given a request with missing start_time', async () => {
-      const testRequest = {
+      const testReq = {
         title: 'My First Post',
         description: 'my first walk',
         user_id: '6143a704366e787fcfb34282',
         coords: parseStrava(testCoords),
       }
-      const res = await request
+      const { body: { msg } } = await request
         .post('/api/routes')
-        .send(testRequest)
+        .send(testReq)
         .expect(400)
-      expect(res.body.msg).toBe('Bad request')
+      expect(msg).toBe('Bad request')
     })
   })
 })
 describe('Poi', () => {
   describe('GET /routes/:route_id/poi', () => {
-    it.only('should respond with relevant pois for a given route', async () => {
+    it('should respond with relevant pois for a given route', async () => {
       const { body: { pois } } = await request.get('/api/routes/6143a704366e787fcfb34292/poi')
         .expect(200)
       expect(pois).toBeInstanceOf(Array)
