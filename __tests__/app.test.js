@@ -131,11 +131,26 @@ describe('Users', () => {
           expect(user.body.user.username).toEqual(update.username)
         })
     })
-    it('should respond with 400 is user does not exist', async () => {
+    it('should respond with 400 if user does not exist', async () => {
       const update = { bio: 'will this test bio update' }
       const result = await request
         .patch('/api/users/ant')
         .send(update)
+        .expect(400)
+        .then((user) => {
+          expect(user.body.msg).toEqual('Bad request')
+        })
+    })
+  })
+  describe.only('DELETE - /users/:user_id', () => {
+    it('should delete user when passed a user_id', async () => {
+      const result = await request
+        .delete('/api/users/6143a704366e787fcfb34282')
+        .expect(204)
+    })
+    it('should respond with 400 if user does not exist', async () => {
+      const result = await request
+        .delete('/api/users/ant')
         .expect(400)
         .then((user) => {
           expect(user.body.msg).toEqual('Bad request')
