@@ -20,11 +20,11 @@ exports.selectRoutes = async (queries) => {
   }
 
   const query = user_id? {user_id} : {}
-
+  
   const result = await Route.paginate(
     query,
     {
-      sort: (order === 'desc' && '-') + sort_by,
+      sort: (order === 'desc' ? '-' : '') + sort_by,
       offset: (page - 1) * limit,
       limit
     }

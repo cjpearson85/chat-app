@@ -13,6 +13,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "jest": {
+    "setupFilesAfterEnv": ["jest-sorted"]
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
@@ -25,6 +28,7 @@
     "faker": "^5.5.3",
     "husky": "^7.0.2",
     "jest": "^27.1.1",
+    "jest-sorted": "^1.0.12",
     "nodemon": "^2.0.12",
     "supertest": "^6.1.6"
   }
