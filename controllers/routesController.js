@@ -1,13 +1,16 @@
 const {
-  selectAllRoutes,
+  selectRoutes,
   insertRoute,
   selectRouteById,
 } = require('../models/routesModels')
 
 exports.getRoutes = (req, res, next) => {
-  selectAllRoutes().then((routes) => {
-    res.status(200).send({ routes })
-  }).catch(next)
+  selectRoutes(req.query)
+    .then((routes) => {
+      res.status(200)
+      .send(routes)
+    })
+    .catch(next)
 }
 
 exports.getRouteById = (req, res, next) => {

@@ -29,8 +29,8 @@ afterAll(async () => {
 })
 
 describe('Users', () => {
-  describe('GET - /users', () => {
-    it('should ', async () => {
+  describe.only('GET - /users', () => {
+    it('should return all users', async () => {
       const { body: { users } } = await request.get('/api/users')
         .expect(200)
       expect(users).toBeInstanceOf(Array)
@@ -38,7 +38,7 @@ describe('Users', () => {
       users.forEach((user) => {
         expect(user).toEqual(
           expect.objectContaining({
-            user_id: expect.any(String),
+            _id: expect.any(String),
             bio: expect.any(String),
             avatar_url: expect.any(String),
             username: expect.any(String),
@@ -46,6 +46,35 @@ describe('Users', () => {
         )
       })
     })
+    it('paginated by default 10 results', async () => {
+      const { body: { users, page, totalPages, totalResults } } 
+        = await request.get('/api/users')
+        .expect(200)
+      expect(users).toHaveLength(10)
+      expect(page).toBe(1)
+      expect(totalPages).toBe(2)
+      expect(totalResults).toBe(15)
+    })
+    it('page query', async () => {
+      const { body: { users, page, totalPages, totalResults } } 
+        = await request.get('/api/users?page=2')
+      .expect(200)
+    expect(users).toHaveLength(5)
+    expect(page).toBe(2)
+    expect(totalPages).toBe(2)
+    expect(totalResults).toBe(15)
+    });
+    it('custom limit', async () => {
+      const { body: { users, page, totalPages } } 
+        = await request.get('/api/users?&limit=3')
+      .expect(200)
+    expect(users).toHaveLength(3)
+    expect(page).toBe(1)
+    expect(totalPages).toBe(5)
+    })
+    it('default sort is by user creation time descending', () => {
+      // TEST HERE
+    });
   })
   describe('GET -/users/:username', () => {
     it('should return a user profile', async () => {
@@ -54,7 +83,6 @@ describe('Users', () => {
     })
   })
 })
-
 describe('Route', () => {
   describe('GET - /routes', () => {
     it('should get all routes', async () => {
@@ -186,7 +214,7 @@ describe('Route', () => {
 })
 describe('Poi', () => {
   describe('GET /routes/:route_id/poi', () => {
-    it.only('should respond with relevant pois for a given route', async () => {
+    it('should respond with relevant pois for a given route', async () => {
       const { body: { pois } } = await request.get('/api/routes/6143a704366e787fcfb34292/poi')
         .expect(200)
       expect(pois).toBeInstanceOf(Array)
