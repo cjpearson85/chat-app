@@ -22,6 +22,9 @@ exports.selectUsers = async (queries) => {
       select: ['user_id', 'name', 'bio', 'avatar_url', 'username']
     }  
   )
+  if (page > result.totalPages) {
+    return Promise.reject({status: 404, msg: 'Resource not found'})
+  }
   return {
     users: result.docs,
     totalPages: result.totalPages,
@@ -33,6 +36,6 @@ exports.selectUsers = async (queries) => {
 exports.selectUserById = async (user_id) => {
   const result = await User.findOne(
     { _id: user_id })
-      .select('user_id name bio avatar_url username')
+    .select('user_id name bio avatar_url username')
   return result
 }

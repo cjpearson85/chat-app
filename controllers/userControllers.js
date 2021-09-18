@@ -16,5 +16,5 @@ exports.getUserById = (req, res, next) => {
   selectUserById(user_id)
     .then((user) => {
       res.status(200).send({ user })
-  })
+    })
 }

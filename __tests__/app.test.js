@@ -49,7 +49,7 @@ describe('Users', () => {
     it('paginated by default 10 results', async () => {
       const { body: { users, page, totalPages, totalResults } } 
         = await request.get('/api/users')
-        .expect(200)
+          .expect(200)
       expect(users).toHaveLength(10)
       expect(page).toBe(1)
       expect(totalPages).toBe(2)
@@ -58,25 +58,31 @@ describe('Users', () => {
     it('page query', async () => {
       const { body: { users, page, totalPages, totalResults } } 
         = await request.get('/api/users?page=2')
-      .expect(200)
-    expect(users).toHaveLength(5)
-    expect(page).toBe(2)
-    expect(totalPages).toBe(2)
-    expect(totalResults).toBe(15)
-    });
+          .expect(200)
+      expect(users).toHaveLength(5)
+      expect(page).toBe(2)
+      expect(totalPages).toBe(2)
+      expect(totalResults).toBe(15)
+    })
     it('custom limit', async () => {
       const { body: { users, page, totalPages } } 
         = await request.get('/api/users?&limit=3')
-      .expect(200)
-    expect(users).toHaveLength(3)
-    expect(page).toBe(1)
-    expect(totalPages).toBe(5)
+          .expect(200)
+      expect(users).toHaveLength(3)
+      expect(page).toBe(1)
+      expect(totalPages).toBe(5)
+    })
+    it('responds with 404 if no results on given page', async () => {
+      const { body: { msg } } = await request
+        .get('/api/users?page=200')
+        .expect(404)
+      expect(msg).toBe('Resource not found')
     })
     it('default sort is by user creation time descending', () => {
       // TEST HERE after doing post user
-    });
+    })
   })
-  describe.only('GET -/users/:user_id', () => {
+  describe('GET -/users/:user_id', () => {
     it('should return a user profile', async () => {
       const { body: { user } } = await request.get('/api/users/6143a704366e787fcfb34282')
       expect(user).toEqual(
@@ -122,10 +128,57 @@ describe('Route', () => {
           }))
       }) 
     })
-    it('should query by user', async () => {
-      const { body: { routes } } = await request.get('/api/routes')
-      .expect(200)
-    });
+    it('should query by user_id', async () => {
+      const { body: { routes } } = await request
+        .get('/api/routes?user_id=6143a704366e787fcfb34278')
+        .expect(200)
+        expect(routes).toBeInstanceOf(Array)
+        expect(routes.length).toBeGreaterThan(0)
+        routes.forEach((route) => {
+          expect(route).toEqual(
+            expect.objectContaining({
+              _id: expect.any(String),
+              title: expect.any(String),
+              description: expect.any(String),
+              user_id: '6143a704366e787fcfb34278',
+              coords: expect.any(Array),
+              start_time_date: expect.any(String)
+            })
+          )
+        }) 
+    })
+    it('paginated by default 5 results', async () => {
+      const { body: { routes, page, totalPages, totalResults } } 
+        = await request.get('/api/routes')
+          .expect(200)
+      expect(routes).toHaveLength(5)
+      expect(page).toBe(1)
+      expect(totalPages).toBe(4)
+      expect(totalResults).toBe(20)
+    })
+    it('page query', async () => {
+      const { body: { routes, page, totalPages, totalResults } } 
+        = await request.get('/api/routes?page=2')
+          .expect(200)
+      expect(routes).toHaveLength(5)
+      expect(page).toBe(2)
+      expect(totalPages).toBe(4)
+      expect(totalResults).toBe(20)
+    })
+    it('custom limit', async () => {
+      const { body: { routes, page, totalPages } } 
+        = await request.get('/api/routes?&limit=3')
+          .expect(200)
+      expect(routes).toHaveLength(3)
+      expect(page).toBe(1)
+      expect(totalPages).toBe(7)
+    })
+    it('responds with 404 if no results on given page', async () => {
+      const { body: { msg } } = await request
+        .get('/api/routes?page=200')
+        .expect(404)
+      expect(msg).toBe('Resource not found')
+    })
   })
   describe('GET -/routes/route_id', () => {
     it('should get a single route by its id', async () => {

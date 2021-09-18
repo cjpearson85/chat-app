@@ -8,7 +8,7 @@ exports.selectRoutes = async (queries) => {
     order = 'desc',
     limit = 5,
     page = 1,
-    user
+    user_id
   } = queries
 
   if (!['start_time_date', 'likes']
@@ -19,7 +19,7 @@ exports.selectRoutes = async (queries) => {
     return Promise.reject({status: 400, msg: 'Bad request - invalid sort'})
   }
 
-  const query = user? {user} : {}
+  const query = user_id? {user_id} : {}
 
   const result = await Route.paginate(
     query,
@@ -29,6 +29,9 @@ exports.selectRoutes = async (queries) => {
       limit
     }
   )
+  if (page > result.totalPages) {
+    return Promise.reject({status: 404, msg: 'Resource not found'})
+  }
   return {
     routes: result.docs,
     totalPages: result.totalPages,
