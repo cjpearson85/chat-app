@@ -106,7 +106,6 @@ describe('Users', () => {
         .send(update)
         .expect(200)
         .then((user) => {
-          console.log(user.body.user)
           expect(user.body.user.bio).toEqual(update.bio)
         })
     })
@@ -120,9 +119,18 @@ describe('Users', () => {
         .send(update)
         .expect(200)
         .then((user) => {
-          console.log(user.body.user)
           expect(user.body.user.bio).toEqual(update.bio)
           expect(user.body.user.username).toEqual(update.username)
+        })
+    })
+    it('should respond with 404 is user doesnt exist', async () => {
+      const update = { bio: 'will this test bio update' }
+      const result = await request
+        .patch('/api/users/ant')
+        .send(update)
+        .expect(404)
+        .then((user) => {
+          expect(user.body.user.bio).toEqual(update.bio)
         })
     })
   })
