@@ -11,6 +11,10 @@ const {
   getPois,
   postPoi
 } = require('../controllers/poiController')
+const {
+  getComments,
+  postComment
+} = require('../controllers/commentsContoller')
 
 routesRouter
   .route('/')
@@ -27,6 +31,11 @@ routesRouter
   .route('/:route_id/poi')
   .get(getPois) // get route by id
   .post(postPoi)
+
+routesRouter
+  .route('/:route_id/comments')
+  .get(getComments) // get route by id
+  .post(postComment)
 
 // .patch(patchRoute) // update a route
 // .delete(deleteRoute) // delete route from db

@@ -461,7 +461,7 @@ describe('Poi', () => {
 })
 describe('Comments', () => {
   describe('GET - /routes/:route_id/comments', () => {
-    it.only('should respond with relevant comments for a given route', async () => {
+    it('should respond with relevant comments for a given route', async () => {
       const { body: { comments } } = await request
         .get('/api/routes/6143a704366e787fcfb3428f/comments')
         .expect(200)
@@ -472,9 +472,10 @@ describe('Comments', () => {
           expect.objectContaining({
             _id: expect.any(String),
             route_id: '6143a704366e787fcfb3428f',
-            user_id: '6143a704366e787fcfb34276',
+            user_id: expect.any(String),
             body: expect.any(String),
-            created_at: expect.any(String)
+            likes: expect.any(Number),
+            createdAt: expect.any(String)
           })
         )
       })   
@@ -482,28 +483,23 @@ describe('Comments', () => {
   })
   describe('POST - /routes/:route_id/comments', () => {
     it('should add a comment to a route', async () => {
-      // const testDate = new Date()
-      // const testReq = {
-      //   title: 'My First Post',
-      //   description: 'my first walk',
-      //   user_id: '6143a704366e787fcfb34282',
-      //   coords: parseStrava(testCoords),
-      //   start_time_date: testDate,
-      // }
-      // const { body: { route } } = await request
-      //   .post('/api/routes')
-      //   .send(testReq)
-      //   .expect(201)
-      // expect(route).toEqual(
-      //   expect.objectContaining({
-      //     _id: expect.any(String),
-      //     title: 'My First Post',
-      //     description: 'my first walk',
-      //     user_id: '6143a704366e787fcfb34282',
-      //     coords: expect.any(Array),
-      //     start_time_date: expect.any(String)
-      // })
-      // )
+      const testReq = {
+        user_id: '6143a704366e787fcfb34276',
+        body: 'here is what I think'
+      }
+      const { body: { comment } } = await request
+        .post('/api/routes/6143a704366e787fcfb3428f/comments')
+        .send(testReq)
+        .expect(201)
+      expect(comment).toEqual(
+        expect.objectContaining({
+          user_id: '6143a704366e787fcfb34276',
+          body: 'here is what I think',
+          likes: 0,
+          createdAt: expect.any(String),
+          route_id: '6143a704366e787fcfb3428f'
+        })
+      )
     })
   })
 })
