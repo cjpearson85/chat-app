@@ -1,6 +1,7 @@
 const {
   selectComments,
-  insertComment
+  insertComment,
+  updateComment
 } = require('../models/commentsModels')
 
 exports.getComments = (req, res, next) => {
@@ -20,4 +21,10 @@ exports.postComment = (req, res, next) => {
     .catch(next)
 }
 
-exports.patchComment = (req, res, next) => {}
+exports.patchComment = (req, res, next) => {
+  updateComment(req.body, req.params)
+    .then((comment) => {
+      res.status(200).send({ comment })
+    })
+    .catch(next)
+}

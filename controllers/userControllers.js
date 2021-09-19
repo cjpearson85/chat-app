@@ -6,6 +6,10 @@ const {
   login,
   removeUserById,
   selectLikes,
+  selectFollowing,
+  selectFollowers,
+  postFollow,
+  deleteFollow
 } = require('../models/userModels')
 
 exports.getUsers = (req, res, next) => {
@@ -66,3 +70,36 @@ exports.getLikes = (req, res, next) => {
     })
     .catch(next)
 }
+
+exports.getFollowing = (req, res, next) => {
+  selectFollowing(req.params)
+    .then((following) => {
+      res.status(200).send({ following })
+    })
+    .catch(next)
+}
+
+exports.getFollowers = (req, res, next) => {
+  selectFollowers(req.params)
+    .then((followers) => {
+      res.status(200).send({ followers })
+    })
+    .catch(next)
+}
+
+exports.postFollow = (req, res, next) => {
+  insertFollow(req.params, req.body)
+    .then((follow) => {
+      res.status(200).send({ follow })
+    })
+    .catch(next)
+}
+
+exports.deleteFollow = (req, res, next) => {
+  removeFollow(req.params, req.body)
+    .then(() => {
+      res.status(204).send()
+    })
+    .catch(next)
+}
+

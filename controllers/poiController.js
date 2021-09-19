@@ -20,6 +20,8 @@ exports.postPoi = (req, res, next) => {
     .catch(next)
 }
 
-exports.patchPoi = (req, res, next) => {}
+exports.patchPoi = (req, res, next) => {
+  console.log('in here')
+}
 
 exports.deletePoi = (req, res, next) => {}

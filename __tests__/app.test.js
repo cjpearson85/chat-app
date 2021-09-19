@@ -590,7 +590,7 @@ describe('Route', () => {
         start_time_date: testDate,
       }
       const { body: { route: newRoute } } = await request
-      .post('/api/routes').send(testReq).expect(201)
+        .post('/api/routes').send(testReq).expect(201)
       const testReq2 = {
         likes: 1,
         user: '6143a704366e787fcfb34282'
@@ -695,6 +695,13 @@ describe('Poi', () => {
       expect(msg).toBe('Bad request')
     })
   })
+  xdescribe('PATCH - /poi/:poi_id', () => {
+    it('should update a POI', async () => {
+      const { body: { comment: { body: commentBody } } } = await request
+        .patch('/api/poi/6143a705366e787fcfb342f4')
+        .expect(200)
+    });
+  });
 })
 describe('Comments', () => {
   describe('GET - /routes/:route_id/comments', () => {
@@ -743,4 +750,13 @@ describe('Comments', () => {
       )
     })
   })
+  xdescribe('PATCH - /comments/:comment_id', () => {
+    it('should edit a comment body', async () => {
+      const { body: { comment: { body: commentBody } } } = await request
+        .patch('/api/comments/6143a705366e787fcfb342d8')
+        .send({ body: 'I updated my comment!' })
+        .expect(200)
+      expect(commentBody).toBe('I updated my comment!')
+    });
+  });
 })

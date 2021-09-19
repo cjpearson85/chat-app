@@ -4,7 +4,11 @@ const {
   getUserById,
   patchUserById,
   deleteUserById,
-  getLikes
+  getLikes,
+  getFollowing,
+  getFollowers,
+  postFollow,
+  deleteFollow
 } = require('../controllers/userControllers')
 
 userRouter.route('/').get(getUsers)
@@ -18,5 +22,15 @@ userRouter
 userRouter
   .route('/:user_id/likes')
   .get(getLikes)
+
+userRouter
+  .route('/:user_id/following')
+  .get(getFollowing)
+  .post(postFollow)
+  .delete(deleteFollow)
+
+userRouter
+  .route('/:user_id/followers')
+  .get(getFollowers)
 
 module.exports = userRouter

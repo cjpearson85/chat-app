@@ -158,3 +158,19 @@ exports.selectLikes = async ({ user_id }, { like_type }) => {
     }
   }
 }
+
+exports.selectFollowing = async ({ user_id }) => {
+  
+}
+
+exports.selectFollowers = async ({ user_id }) => {
+
+}
+
+exports.insertFollow = async ({ user_id }, { follow }) => {
+
+}
+
+exports.deleteFollow = async ({ user_id }, { follow }) => {
+
+}
