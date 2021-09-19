@@ -824,7 +824,7 @@ describe('Poi', () => {
   })
   describe('DELETE - /poi/:poi_id', () => {
     
-  });
+  })
 })
 describe('Comments', () => {
   describe('GET - /routes/:route_id/comments', () => {
@@ -884,5 +884,5 @@ describe('Comments', () => {
   })
   describe('DELETE - /comments/:comment_id', () => {
     
-  });
+  })
 })

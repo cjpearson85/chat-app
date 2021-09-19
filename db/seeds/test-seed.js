@@ -110,7 +110,7 @@ const addIds = async (commentsTestData, routesTestData, poisTestData, usersTestD
     const follower = insertedUsers[Math.floor(Math.random() * (insertedUsers.length - 1))]._id
     const followed = insertedUsers[Math.floor(Math.random() * (insertedUsers.length - 1))]._id
     let followCombination = `${follower}${followed}`
-    if (!commentLikeCombinations.includes(followCombination) && follower !== followed) {
+    if (!followCombinations.includes(followCombination) && follower !== followed) {
       followCombinations.push(followCombination)
       followCount++
       followTestData.push({follower_id: follower, followed_id: followed})

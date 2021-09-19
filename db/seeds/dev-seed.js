@@ -4,6 +4,7 @@ const Route = require('../../schemas/route')
 const Comment = require('../../schemas/comment')
 const Poi = require('../../schemas/poi')
 const RouteLike = require('../../schemas/route-like')
+const PoiLike = require('../../schemas/poi-like')
 const CommentLike = require('../../schemas/comment-like')
 const Follow = require('../../schemas/follow')
 const {
@@ -57,25 +58,26 @@ const addIds = async (commentsTestData, routesTestData, poisTestData, usersTestD
     copy.coords = { latitude: point.latitude, longitude: point.longitude, time: point.time }
     return copy
   })
-  await connection.models.Poi.insertMany(poisWithRouteandCoords)
+  const insertedPois = await connection.models.Poi.insertMany(poisWithRouteandCoords)
   
   if (connection.models.RouteLike !== undefined) {
     await connection.models.RouteLike.collection.drop()
   }
 
-  let routeLikeCount = 0
-  let routeLikeCombinations = []
   let routeLikesTestData = []
-  while (routeLikeCount < 600) {
-    const user = insertedUsers[Math.floor(Math.random() * (insertedUsers.length - 1))]._id
-    const route = insertedRoutes[Math.floor(Math.random() * (insertedRoutes.length - 1))]._id
-    let combination = `${user}${route}`
-    if (!routeLikeCombinations.includes(combination)) {
-      routeLikeCombinations.push(combination)
-      routeLikeCount++
-      routeLikesTestData.push({route_id: route, user_id: user})
+  for (let route of insertedRoutes) {
+    let routeLikeCount = 0
+    let users = []
+    while (routeLikeCount < route.likes) {
+      const user = insertedUsers[Math.floor(Math.random() * (insertedUsers.length - 1))]._id
+      if (!users.includes(user)) {
+        users.push(user)
+        routeLikeCount++
+        routeLikesTestData.push({ route_id: route._id, user_id: user })
+      }
     }
   }
+
 
   await connection.models.RouteLike.insertMany(routeLikesTestData)
 
@@ -83,21 +85,41 @@ const addIds = async (commentsTestData, routesTestData, poisTestData, usersTestD
     await connection.models.CommentLike.collection.drop()
   }
 
-  let commentLikeCount = 0
-  let commentLikeCombinations = []
   let commentLikesTestData = []
-  while (commentLikeCount < 800) {
-    const user = insertedUsers[Math.floor(Math.random() * (insertedUsers.length - 1))]._id
-    const comment = insertedComments[Math.floor(Math.random() * (insertedComments.length - 1))]._id
-    let combination = `${user}${comment}`
-    if (!commentLikeCombinations.includes(combination)) {
-      commentLikeCombinations.push(combination)
-      commentLikeCount++
-      commentLikesTestData.push({comment_id: comment, user_id: user})
+  for (let comment of insertedComments) {
+    let commentLikeCount = 0
+    let users = []
+    while (commentLikeCount < comment.likes) {
+      const user = insertedUsers[Math.floor(Math.random() * (insertedUsers.length - 1))]._id
+      if (!users.includes(user)) {
+        users.push(user)
+        commentLikeCount++
+        commentLikesTestData.push({ comment_id: comment._id, user_id: user })
+      }
     }
   }
 
   await connection.models.CommentLike.insertMany(commentLikesTestData)
+
+  if (connection.models.PoiLike !== undefined) {
+    await connection.models.PoiLike.collection.drop()
+  }
+
+  let poiLikesTestData = []
+  for (let poi of insertedPois) {
+    let poiLikeCount = 0
+    let users = []
+    while (poiLikeCount < poi.likes) {
+      const user = insertedUsers[Math.floor(Math.random() * (insertedUsers.length - 1))]._id
+      if (!users.includes(user)) {
+        users.push(user)
+        poiLikeCount++
+        poiLikesTestData.push({ poi_id: poi._id, user_id: user })
+      }
+    }
+  }
+
+  await connection.models.CommentLike.insertMany(poiLikesTestData)
 
   if (connection.models.Follow !== undefined) {
     await connection.models.Follow.collection.drop()
@@ -110,7 +132,7 @@ const addIds = async (commentsTestData, routesTestData, poisTestData, usersTestD
     const follower = insertedUsers[Math.floor(Math.random() * (insertedUsers.length - 1))]._id
     const followed = insertedUsers[Math.floor(Math.random() * (insertedUsers.length - 1))]._id
     let followCombination = `${follower}${followed}`
-    if (!commentLikeCombinations.includes(followCombination) && follower !== followed) {
+    if (!followCombinations.includes(followCombination) && follower !== followed) {
       followCombinations.push(followCombination)
       followCount++
       followTestData.push({follower_id: follower, followed_id: followed})
