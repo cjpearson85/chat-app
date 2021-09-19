@@ -852,7 +852,7 @@ describe('Poi', () => {
         .expect(400)
         .then((res) => {
           expect(res.body.msg).toEqual('Bad request')
-      })
+        })
     })
     it('should increment a POIs likes', async() => {
       const { body: { user: { _id } } } = await request
@@ -1040,7 +1040,7 @@ describe('Comments', () => {
         .expect(400)
         .then((res) => {
           expect(res.body.msg).toEqual('Bad request')
-      })
+        })
     })
     it('should increment a comments likes', async() => {
       const { body: { user: { _id } } } = await request
