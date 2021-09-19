@@ -1,4 +1,7 @@
 const User = require('../schemas/user')
+const RouteLike = require('../schemas/route-like')
+const CommentLike = require('../schemas/comment-like')
+const PoiLike = require('../schemas/poi-like')
 const mongoose = require('mongoose')
 const db = require('../db/connection')
 const { generateSalt, hashPassword, validPassword } = require('../utils')
@@ -124,5 +127,34 @@ exports.login = async ({ username, password }) => {
     return Promise.reject({ status: 401, msg: 'Incorrect password' })
   } else {
     return { msg: 'Logged in' }
+  }
+}
+
+exports.selectLikes = async ({ user_id }, { like_type }) => {
+  if (like_type) {
+    if (!['comments', 'routes', 'pois'].includes(like_type)) {
+      return Promise.reject({ status: 400, msg: 'Bad request' })
+    }
+  }
+  if (like_type === 'comments') {
+    return { comments: await CommentLike.find({ user_id }) }
+  }
+  if (like_type === 'routes') {
+    return { routes: await RouteLike.find({ user_id }) }
+  }
+  if (like_type === 'pois') {
+    return { pois: await PoiLike.find({ user_id }) }
+  }
+  if (!like_type) {
+    const [comments, routes, pois] = await Promise.all([
+      CommentLike.find({ user_id }),
+      RouteLike.find({ user_id }),
+      PoiLike.find({ user_id })
+    ])
+    return { 
+      comments,
+      routes, 
+      pois
+    }
   }
 }

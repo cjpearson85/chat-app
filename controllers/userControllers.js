@@ -5,6 +5,7 @@ const {
   insertUser,
   login,
   removeUserById,
+  selectLikes,
 } = require('../models/userModels')
 
 exports.getUsers = (req, res, next) => {
@@ -54,6 +55,14 @@ exports.postLogin = (req, res, next) => {
   login(req.body)
     .then((msg) => {
       res.status(200).send(msg)
+    })
+    .catch(next)
+}
+
+exports.getLikes = (req, res, next) => {
+  selectLikes(req.params, req.query)
+    .then((likes) => {
+      res.status(200).send({ likes })
     })
     .catch(next)
 }

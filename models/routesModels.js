@@ -1,4 +1,5 @@
 const Route = require('../schemas/route')
+const RouteLike = require('../schemas/route-like')
 const mongoose = require('mongoose')
 const db = require('../db/connection')
 
@@ -64,8 +65,47 @@ exports.selectRouteById = async (id) => {
   return result
 }
 
-exports.updateRouteById = async (id, body) => {
-  const result = await Route.findByIdAndUpdate(id, body, { new: true })
+exports.updateRouteById = async (id, requestBody) => {
+  let {
+    user,
+    likes,
+    title,
+    description
+  } = requestBody
+  if (!title && !description && !likes) {
+    return Promise.reject({ status: 400, msg: 'Bad request - missing field(s)' })
+  }
+  if (likes && !user) {
+    return Promise.reject({ status: 400, msg: 'Bad request - missing field(s)' })
+  }
+  if (likes) {
+    const existingLike = RouteLike.findOne({user_id: user, _id: id})
+    if (existingLike) {
+      if (likes === 1) {
+        return Promise.reject({ status: 400, msg: 'Bad request - duplicate like' })
+      }
+      if (likes === -1) {
+        await Route.deleteOne({_id: existingLike._id})
+      }
+    } else {
+      const routeLike = new RouteLike ({
+        user_id: user,
+        route_id: id,
+      })
+    }
+  }
+
+  const routeLikes = await Route.findById(id).select('likes')
+  if (routeLikes.likes === 0 && likes === -1) {
+    return Promise.reject({ status: 400, msg: 'Bad request - likes are already zero' })
+  }
+  if (!likes) likes = routeLikes.likes
+  else likes = routeLikes.likes + likes
+  const result = await Route.findByIdAndUpdate(id, {
+    title,
+    description,
+    likes
+  }, { new: true })
   return result
 }
 

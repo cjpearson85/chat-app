@@ -160,6 +160,25 @@ describe('Users', () => {
       } = await request.post('/api/login').send(oldLogin).expect(401)
       expect(msg2).toBe('Incorrect password')
     })
+    it('should detect a taken username', async () => {
+      const testReq = {
+        username: 'sonic_hedgehog',
+        name: 'Joe Warburton',
+        avatar_url: 'http://img.url',
+        password: 'pizza',
+      }
+      const user = await request
+        .post('/api/signup').expect(201).send(testReq)
+      const testPatchReq = {
+        username: 'sonic_hedgehog',
+      }
+      const {
+        body: { msg },
+      } = await request
+        .patch(`/api/users/${user._id}`)
+        .expect(400).send(testPatchReq)
+      expect(msg).toBe('Username is taken')
+    })
     it('should respond with 400 if user does not exist', async () => {
       const update = { bio: 'will this test bio update' }
       const result = await request
@@ -279,6 +298,13 @@ describe('Users', () => {
       expect(msg).toBe('Bad request')
     })
   })
+  describe('GET - /users/:user_id/likes', () => {
+    it('returns all likes by user', async () => {
+      const likes = await request
+        .get('/api/users/6143a704366e787fcfb34274/likes?')
+        .expect(200)
+    });
+  });
 })
 describe('Route', () => {
   describe('GET - /routes', () => {
@@ -472,7 +498,7 @@ describe('Route', () => {
     })
   })
   describe('PATCH - /routes/:routes_id', () => {
-    it('should update a route with new info', async () => {
+    it.only('should update a route with new info', async () => {
       const update = { title: 'My New Title' }
       const result = await request
         .patch('/api/routes/6143a704366e787fcfb34286')
