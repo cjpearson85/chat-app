@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "lint": "eslint ./",
+    "lint": "eslint ./ --fix",
     "nodemon": "nodemon listen.js",
     "prepare": "husky install",
     "start": "node listen.js"

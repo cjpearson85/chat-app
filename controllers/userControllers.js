@@ -26,8 +26,7 @@ exports.getUserById = (req, res, next) => {
 
 exports.patchUserById = (req, res, next) => {
   const { user_id } = req.params
-  const { body } = req
-  updateUserById(user_id, body)
+  updateUserById(user_id, req.body)
     .then((user) => {
       res.status(200).send({ user })
     })

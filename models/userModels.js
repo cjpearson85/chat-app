@@ -14,7 +14,7 @@ exports.selectUsers = async (queries) => {
     result = await User.paginate(
       {},
       {
-        sort: { created_at: -1 },
+        sort: { createdAt: -1 },
         pagination: false,
         select: ['user_id', 'name', 'bio', 'avatar_url', 'username'],
       }
@@ -29,7 +29,7 @@ exports.selectUsers = async (queries) => {
     const result = await User.paginate(
       {},
       {
-        sort: { created_at: -1 },
+        sort: { createdAt: -1 },
         offset: (page - 1) * limit,
         limit,
         select: ['user_id', 'name', 'bio', 'avatar_url', 'username'],
@@ -54,8 +54,31 @@ exports.selectUserById = async (user_id) => {
   return result
 }
 
-exports.updateUserById = async (user_id, body) => {
-  const result = await User.findByIdAndUpdate(user_id, body, {
+exports.updateUserById = async (user_id, update) => {
+  const {
+    username,
+    password,
+    avatar_url,
+    bio
+  } = update
+
+  const existingUser = await User.findOne({ username })
+  if (existingUser) {
+    return Promise.reject({ status: 400, msg: 'Username is taken' })
+  }
+  let salt, hash
+  if (password) {
+    salt = generateSalt()
+    hash = hashPassword(password, salt)
+  }
+
+  const result = await User.findByIdAndUpdate(user_id, {
+    username,
+    avatar_url,
+    bio,
+    hash,
+    salt
+  }, {
     new: true,
   }).select('user_id name bio avatar_url username')
   return result

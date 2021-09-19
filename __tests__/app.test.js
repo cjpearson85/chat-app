@@ -87,9 +87,6 @@ describe('Users', () => {
       } = await request.get('/api/users?page=200').expect(404)
       expect(msg).toBe('Resource not found')
     })
-    it('default sort is by user creation time descending', () => {
-      // TEST HERE after doing post user
-    })
   })
   describe('GET -/users/:user_id', () => {
     it('should return a user profile', async () => {
@@ -130,6 +127,38 @@ describe('Users', () => {
           expect(user.body.user.bio).toEqual(update.bio)
           expect(user.body.user.username).toEqual(update.username)
         })
+    })
+    it('patch password', async () => {
+      const testReq = {
+        username: 'sonic_hedgehog',
+        name: 'Joe Warburton',
+        avatar_url: 'http://img.url',
+        password: 'pizza',
+      }
+      const {
+        body: { user },
+      } = await request.post('/api/signup').expect(201).send(testReq)
+      const newPassword = { password: 'calzone' }
+      await request
+        .patch(`/api/users/${user._id}`)
+        .send(newPassword)
+        .expect(200)
+      const testLogin = {
+        username: 'sonic_hedgehog',
+        password: newPassword.password,
+      }
+      const {
+        body: { msg },
+      } = await request.post('/api/login').send(testLogin).expect(200)
+      expect(msg).toBe('Logged in')
+      const oldLogin = {
+        username: 'sonic_hedgehog',
+        password: 'pizza',
+      }
+      const {
+        body: { msg: msg2 },
+      } = await request.post('/api/login').send(oldLogin).expect(401)
+      expect(msg2).toBe('Incorrect password')
     })
     it('should respond with 400 if user does not exist', async () => {
       const update = { bio: 'will this test bio update' }
