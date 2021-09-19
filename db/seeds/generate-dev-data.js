@@ -25,7 +25,8 @@ for (let i = 0; i < 22; i++) {
   const salt = generateSalt()
   const hash = hashPassword(username, salt)
   const bio = faker.lorem.paragraph()
-  usersData.push({ name, avatar_url, username, bio, salt, hash})
+  const createdAt = faker.date.past(3)
+  usersData.push({ name, avatar_url, username, bio, salt, hash, createdAt})
 }
 
 fs.writeFileSync('./db/data/dev-data/generated/users.seed.js', 'module.exports = ' + JSON.stringify(usersData))
@@ -42,7 +43,8 @@ for (let i = 0; i < 40; i++) {
   const description = faker.lorem.sentences(2)
   const start_time_date = faker.date.past(3)
   const coords = gpxs[Math.floor(Math.random() * 6)]
-  routesData.push({ title, description, start_time_date, coords})
+  const likes = Math.floor(Math.random() * 20)
+  routesData.push({ title, description, start_time_date, coords, likes })
 }
 
 fs.writeFileSync('./db/data/dev-data/generated/routes.seed.js', 'module.exports = ' + JSON.stringify(routesData))
@@ -54,8 +56,9 @@ for (let i = 0; i < 250; i++) {
   if (!photo && !narration) {
     photo = faker.image.nature()
   }
-
-  poiData.push({ photo, narration})
+  const createdAt = faker.date.past(3)
+  const likes = Math.floor(Math.random() * 20)
+  poiData.push({ photo, narration, createdAt, likes })
 }
 
 fs.writeFileSync('./db/data/dev-data/generated/pois.seed.js', 'module.exports = ' + JSON.stringify(poiData))
@@ -63,7 +66,9 @@ fs.writeFileSync('./db/data/dev-data/generated/pois.seed.js', 'module.exports = 
 let commentData = []
 for (let i = 0; i < 500; i++) {
   const body = faker.lorem.paragraph()
-  commentData.push({ body})
+  const createdAt = faker.date.past(3)
+  const likes = Math.floor(Math.random() * 20)
+  commentData.push({ body, createdAt, likes })
 }
 
 fs.writeFileSync('./db/data/dev-data/generated/comments.seed.js', 'module.exports = ' + JSON.stringify(commentData))

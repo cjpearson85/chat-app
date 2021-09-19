@@ -5,6 +5,11 @@ const {
   insertUser,
   login,
   removeUserById,
+  selectLikes,
+  selectFollowing,
+  selectFollowers,
+  insertFollow,
+  removeFollow
 } = require('../models/userModels')
 
 exports.getUsers = (req, res, next) => {
@@ -26,8 +31,7 @@ exports.getUserById = (req, res, next) => {
 
 exports.patchUserById = (req, res, next) => {
   const { user_id } = req.params
-  const { body } = req
-  updateUserById(user_id, body)
+  updateUserById(user_id, req.body)
     .then((user) => {
       res.status(200).send({ user })
     })
@@ -58,3 +62,44 @@ exports.postLogin = (req, res, next) => {
     })
     .catch(next)
 }
+
+exports.getLikes = (req, res, next) => {
+  selectLikes(req.params, req.query)
+    .then((likes) => {
+      res.status(200).send({ likes })
+    })
+    .catch(next)
+}
+
+exports.getFollowing = (req, res, next) => {
+  selectFollowing(req.params)
+    .then((following) => {
+      res.status(200).send({ following })
+    })
+    .catch(next)
+}
+
+exports.getFollowers = (req, res, next) => {
+  selectFollowers(req.params)
+    .then((followers) => {
+      res.status(200).send({ followers })
+    })
+    .catch(next)
+}
+
+exports.postFollow = (req, res, next) => {
+  insertFollow(req.params, req.body)
+    .then((follow) => {
+      res.status(201).send({ follow })
+    })
+    .catch(next)
+}
+
+exports.deleteFollow = (req, res, next) => {
+  removeFollow(req.params, req.body)
+    .then(() => {
+      res.status(204).send()
+    })
+    .catch(next)
+}
+

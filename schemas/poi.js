@@ -20,6 +20,10 @@ const poiSchema = new Schema(
       longitude: { type: 'Number', required: true },
       time: {type: 'Date'}
     },
+    likes: {
+      type: Number,
+      default: 0
+    }
   },
   { timestamps: true }
 )

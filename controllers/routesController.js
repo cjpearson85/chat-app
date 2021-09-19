@@ -44,12 +44,9 @@ exports.deleteRoute = (req, res, next) => {
     .catch(next)
 }
 
-exports.getUserRoutes = (req, res, next) => {}
-
 exports.patchRoute = (req, res, next) => {
   const { route_id } = req.params
-  const { body } = req
-  updateRouteById(route_id, body)
+  updateRouteById(route_id, req.body)
     .then((route) => {
       res.status(200).send({ route })
     })

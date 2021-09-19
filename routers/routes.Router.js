@@ -4,7 +4,6 @@ const {
   deleteRoute,
   getRoutes,
   getRouteById,
-  getUserRoutes,
   patchRoute,
 } = require('../controllers/routesController')
 const {
@@ -36,8 +35,5 @@ routesRouter
   .route('/:route_id/comments')
   .get(getComments) // get route by id
   .post(postComment)
-
-// .patch(patchRoute) // update a route
-// .delete(deleteRoute) // delete route from db
 
 module.exports = routesRouter
