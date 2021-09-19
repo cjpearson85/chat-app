@@ -301,7 +301,7 @@ describe('Users', () => {
   describe('GET - /users/:user_id/likes', () => {
     it('returns all likes by user', async () => {
       const likes = await request
-        .get('/api/users/6143a704366e787fcfb34274/likes?')
+        .get('/api/users/6143a704366e787fcfb34274/likes')
         .expect(200)
     })
   })
@@ -657,6 +657,28 @@ describe('Route', () => {
         .expect(200)
       expect(newLikes).toBe(oldLikes + 1)
     })
+    it('should cancel a like', async () => {
+      await request
+        .patch(`/api/routes/6143a704366e787fcfb34286`)
+        .send({ likes: 1, user: '6143a704366e787fcfb34274'})
+        .expect(200)
+      const { body: { likes: { routes } } } = await request
+        .get('/api/users/6143a704366e787fcfb34274/likes')
+        .expect(200)
+      expect(routes.map(route => route.route_id)
+        .includes('6143a704366e787fcfb34286'))
+          .toBe(true)
+      await request
+        .patch(`/api/routes/6143a704366e787fcfb34286`)
+        .send({ likes: -1, user: '6143a704366e787fcfb34274'})
+        .expect(200)
+      const { body: { likes: { routes: updated } } } = await request
+        .get('/api/users/6143a704366e787fcfb34274/likes')
+        .expect(200)
+      expect(updated.map(route => route.route_id)
+        .includes('6143a704366e787fcfb34286'))
+          .toBe(false)
+    });
     it('should reject with 400 duplicate like by same user', async () => {
       const { body: { user: { _id } } } = await request
         .post('/api/signup')
@@ -873,8 +895,8 @@ describe('Comments', () => {
       )
     })
   })
-  xdescribe('PATCH - /comments/:comment_id', () => {
-    it.only('should edit a comment body', async () => {
+  describe('PATCH - /comments/:comment_id', () => {
+    it('should edit a comment body', async () => {
       const { body: { comment: { body: commentBody } } } = await request
         .patch('/api/comments/6143a705366e787fcfb342d8')
         .send({ body: 'I updated my comment!' })
@@ -883,6 +905,10 @@ describe('Comments', () => {
     })
   })
   describe('DELETE - /comments/:comment_id', () => {
-    
+    it('should delete a comment given as param', async () => {
+      await request
+        .delete('/api/comments/6143a705366e787fcfb342d5')
+        .expect(204)
+    });
   })
 })

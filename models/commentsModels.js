@@ -1,4 +1,5 @@
 const Comment = require('../schemas/comment')
+const CommentLike = require('../schemas/comment-like')
 const db = require('../db/connection')
 const mongoose = require('mongoose')
 
@@ -49,11 +50,49 @@ exports.insertComment = async ({ body, user_id }, { route_id }) => {
   return result
 }
 
-exports.updateComment = async (requestBody, { comment_id }) => {
-  
+exports.updateComment = async ({ body, likes, user }, { comment_id }) => {
+  if (!body && !likes) {
+    return Promise.reject({ status: 400, msg: 'Bad request - missing field(s)' })
+  }
+  if (likes && !user) {
+    return Promise.reject({ status: 400, msg: 'Bad request - missing field(s)' })
+  }
+  if (likes) {
+    const existingLike = await CommentLike.findOne({user_id: user, comment_id })
+    if (existingLike) {
+      if (likes === 1) {
+        return Promise.reject({ status: 400, msg: 'Bad request - duplicate like' })
+      }
+      if (likes === -1) {
+        await Route.deleteOne({_id: existingLike._id})
+      }
+    } else {
+      if (likes === -1) {
+        return Promise.reject({ status: 400, msg: 'Bad request - like not found' })
+      }
+      const routeLike = new RouteLike ({
+        user_id: user,
+        route_id: id,
+      })
+      await routeLike.save()
+    }
+  }
+
+  const routeLikes = await Route.findById(id).select('likes')
+  if (routeLikes.likes === 0 && likes === -1) {
+    return Promise.reject({ status: 400, msg: 'Bad request - likes are already zero' })
+  }
+  if (!likes) likes = routeLikes.likes
+  else likes = routeLikes.likes + likes
+  const result = await Route.findByIdAndUpdate(id, {
+    title,
+    description,
+    likes
+  }, { new: true })
+  return result
 }
 
 
 exports.removeComment = async ({ comment_id }) => {
-
+  return Comment.findByIdAndDelete(comment_id)
 }

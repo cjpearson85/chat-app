@@ -85,7 +85,7 @@ exports.updateRouteById = async (id, requestBody) => {
         return Promise.reject({ status: 400, msg: 'Bad request - duplicate like' })
       }
       if (likes === -1) {
-        await Route.deleteOne({_id: existingLike._id})
+        await RouteLike.deleteOne({_id: existingLike._id})
       }
     } else {
       if (likes === -1) {

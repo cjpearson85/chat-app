@@ -10,8 +10,8 @@ const {
 
 apiRouter.use('/users', userRouter)
 apiRouter.use('/routes', routesRouter)
-apiRouter.use('./comments', commentsRouter)
-apiRouter.use('./poi', poiRouter)
+apiRouter.use('/comments', commentsRouter)
+apiRouter.use('/poi', poiRouter)
 
 apiRouter.route('/signup')
   .post(postUser)
