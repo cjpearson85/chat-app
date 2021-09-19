@@ -2,6 +2,7 @@ const User = require('../schemas/user')
 const RouteLike = require('../schemas/route-like')
 const CommentLike = require('../schemas/comment-like')
 const PoiLike = require('../schemas/poi-like')
+const Follow = require('../schemas/follow')
 const mongoose = require('mongoose')
 const db = require('../db/connection')
 const { generateSalt, hashPassword, validPassword } = require('../utils')
@@ -160,11 +161,13 @@ exports.selectLikes = async ({ user_id }, { like_type }) => {
 }
 
 exports.selectFollowing = async ({ user_id }) => {
-  
+  return Follow.find({ follower_id: user_id })
+    .select('followed_id')
 }
 
 exports.selectFollowers = async ({ user_id }) => {
-
+  return Follow.find({ followed_id: user_id })
+    .select('follower_id')
 }
 
 exports.insertFollow = async ({ user_id }, { follow }) => {

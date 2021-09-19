@@ -305,6 +305,44 @@ describe('Users', () => {
         .expect(200)
     })
   })
+  describe('GET - /users/:user_id/following', () => {
+    it('returns user IDs of all accounts followed by user in param', async () => {
+      const { body: { following } } = await request
+        .get('/api/users/6143a704366e787fcfb34280/following')
+        .expect(200)
+      expect(following).toBeInstanceOf(Array)
+      expect(following.length).toBeGreaterThan(0)
+      following.forEach((followedUser) => {
+        expect(followedUser).toEqual(
+          expect.objectContaining({
+            followed_id: expect.any(String)
+          })
+        )
+      })
+    })
+  })
+  describe('GET - /users/:user_id/followers', () => {
+    it('returns user IDs of all accounts who follow user in param', async () => {
+      const { body: { followers } } = await request
+        .get('/api/users/6143a704366e787fcfb34280/followers')
+        .expect(200)
+      expect(followers).toBeInstanceOf(Array)
+      expect(followers.length).toBeGreaterThan(0)
+      followers.forEach((follower) => {
+        expect(follower).toEqual(
+          expect.objectContaining({
+            follower_id: expect.any(String)
+          })
+        )
+      })
+    })
+  });
+  describe('POST - /users/:user_id/following', () => {
+    
+  });
+  describe('DELETE - /users/:user_id/following', () => {
+    
+  });
 })
 describe('Route', () => {
   describe('GET - /routes', () => {
@@ -700,8 +738,8 @@ describe('Poi', () => {
       const { body: { comment: { body: commentBody } } } = await request
         .patch('/api/poi/6143a705366e787fcfb342f4')
         .expect(200)
-    });
-  });
+    })
+  })
 })
 describe('Comments', () => {
   describe('GET - /routes/:route_id/comments', () => {
@@ -757,6 +795,6 @@ describe('Comments', () => {
         .send({ body: 'I updated my comment!' })
         .expect(200)
       expect(commentBody).toBe('I updated my comment!')
-    });
-  });
+    })
+  })
 })

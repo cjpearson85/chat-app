@@ -83,19 +83,19 @@ exports.updateComment = async (requestBody, { comment_id }) => {
 //     }
 //   }
 
-//   const routeLikes = await Route.findById(id).select('likes')
-//   if (routeLikes.likes === 0 && likes === -1) {
-//     return Promise.reject({ status: 400, msg: 'Bad request - likes are already zero' })
-//   }
-//   if (!likes) likes = routeLikes.likes
-//   else likes = routeLikes.likes + likes
-//   const result = await Route.findByIdAndUpdate(id, {
-//     title,
-//     description,
-//     likes
-//   }, { new: true })
-//   return result
-// }
+  //   const routeLikes = await Route.findById(id).select('likes')
+  //   if (routeLikes.likes === 0 && likes === -1) {
+  //     return Promise.reject({ status: 400, msg: 'Bad request - likes are already zero' })
+  //   }
+  //   if (!likes) likes = routeLikes.likes
+  //   else likes = routeLikes.likes + likes
+  //   const result = await Route.findByIdAndUpdate(id, {
+  //     title,
+  //     description,
+  //     likes
+  //   }, { new: true })
+  //   return result
+  // }
 
 // exports.removeRouteById = async (id) => {
 //   const result = await Route.findByIdAndDelete(id)

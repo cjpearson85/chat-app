@@ -8,8 +8,8 @@ const {
   selectLikes,
   selectFollowing,
   selectFollowers,
-  postFollow,
-  deleteFollow
+  insertFollow,
+  removeFollow
 } = require('../models/userModels')
 
 exports.getUsers = (req, res, next) => {
