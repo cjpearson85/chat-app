@@ -303,8 +303,8 @@ describe('Users', () => {
       const likes = await request
         .get('/api/users/6143a704366e787fcfb34274/likes?')
         .expect(200)
-    });
-  });
+    })
+  })
 })
 describe('Route', () => {
   describe('GET - /routes', () => {
@@ -497,8 +497,8 @@ describe('Route', () => {
       expect(msg).toBe('Bad request')
     })
   })
-  describe('PATCH - /routes/:routes_id', () => {
-    it.only('should update a route with new info', async () => {
+  describe.only('PATCH - /routes/:routes_id', () => {
+    it('should update a route with new info', async () => {
       const update = { title: 'My New Title' }
       const result = await request
         .patch('/api/routes/6143a704366e787fcfb34286')
@@ -518,6 +518,68 @@ describe('Route', () => {
           expect(user.body.msg).toEqual('Bad request')
         })
     })
+    it('should increment a routes likes', async() => {
+      const { body: { user: { _id } } } = await request
+        .post('/api/signup')
+        .send({
+          username: 'sonic_hedgehog',
+          password: 'pizza',
+        })
+        .expect(201)
+      const { body: { route: { likes: oldLikes } } } = await request
+        .get('/api/routes/6143a704366e787fcfb34286').expect(200)
+      const testReq = {
+        likes: 1,
+        user: _id
+      }
+      const { body: { route: { likes: newLikes } } } = await request
+        .patch('/api/routes/6143a704366e787fcfb34286')
+        .send(testReq)
+        .expect(200)
+      expect(newLikes).toBe(oldLikes + 1)
+    });
+    it('should reject with 400 duplicate like by same user', async () => {
+      const { body: { user: { _id } } } = await request
+        .post('/api/signup')
+        .send({
+          username: 'sonic_hedgehog',
+          password: 'pizza',
+        })
+        .expect(201)
+      const testReq = {
+        likes: 1,
+        user: _id
+      }
+      await request
+        .patch('/api/routes/6143a704366e787fcfb34286')
+        .send(testReq)
+        .expect(200)
+      const { body: { msg } } = await request
+        .patch('/api/routes/6143a704366e787fcfb34286')
+        .send(testReq)
+        .expect(400)
+      expect(msg).toBe("Bad request - duplicate like")
+    })
+    it('should reject with 400 if cancelling non-existent like', async () => {
+      const { body: { user: { _id } } } = await request
+      .post('/api/signup')
+      .send({
+        username: 'sonic_hedgehog',
+        password: 'pizza',
+      })
+      const { body: { msg } } = await request
+      .patch('/api/routes/6143a704366e787fcfb34286')
+      .send({ likes: -1, user: _id})
+      .expect(400)
+    expect(msg).toBe("Bad request - like not found")
+    })
+    it('reject 400, no user provided', async () => {
+      const { body: { msg } } = await request
+      .patch('/api/routes/6143a704366e787fcfb34286')
+      .send({ likes: -1})
+      .expect(400)
+    expect(msg).toBe("Bad request - missing field(s)")
+    });
   })
   describe('DELETE - /routes/:route_id', () => {
     it('should remove a route from the db when passed a route_id', async () => {

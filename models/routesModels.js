@@ -79,7 +79,7 @@ exports.updateRouteById = async (id, requestBody) => {
     return Promise.reject({ status: 400, msg: 'Bad request - missing field(s)' })
   }
   if (likes) {
-    const existingLike = RouteLike.findOne({user_id: user, _id: id})
+    const existingLike = await RouteLike.findOne({user_id: user, route_id: id})
     if (existingLike) {
       if (likes === 1) {
         return Promise.reject({ status: 400, msg: 'Bad request - duplicate like' })
@@ -88,10 +88,14 @@ exports.updateRouteById = async (id, requestBody) => {
         await Route.deleteOne({_id: existingLike._id})
       }
     } else {
+      if (likes === -1) {
+        return Promise.reject({ status: 400, msg: 'Bad request - like not found' })
+      }
       const routeLike = new RouteLike ({
         user_id: user,
         route_id: id,
       })
+      await routeLike.save()
     }
   }
 
