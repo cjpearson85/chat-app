@@ -667,7 +667,7 @@ describe('Route', () => {
         .expect(200)
       expect(routes.map(route => route.route_id)
         .includes('6143a704366e787fcfb34286'))
-          .toBe(true)
+        .toBe(true)
       await request
         .patch(`/api/routes/6143a704366e787fcfb34286`)
         .send({ likes: -1, user: '6143a704366e787fcfb34274'})
@@ -677,8 +677,8 @@ describe('Route', () => {
         .expect(200)
       expect(updated.map(route => route.route_id)
         .includes('6143a704366e787fcfb34286'))
-          .toBe(false)
-    });
+        .toBe(false)
+    })
     it('should reject with 400 duplicate like by same user', async () => {
       const { body: { user: { _id } } } = await request
         .post('/api/signup')
@@ -909,6 +909,6 @@ describe('Comments', () => {
       await request
         .delete('/api/comments/6143a705366e787fcfb342d5')
         .expect(204)
-    });
+    })
   })
 })

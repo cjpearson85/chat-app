@@ -58,35 +58,34 @@ exports.updateComment = async ({ body, likes, user }, { comment_id }) => {
     return Promise.reject({ status: 400, msg: 'Bad request - missing field(s)' })
   }
   if (likes) {
-    const existingLike = await CommentLike.findOne({user_id: user, comment_id })
+    const existingLike = await CommentLike.findOne({user_id: user, comment_id})
     if (existingLike) {
       if (likes === 1) {
         return Promise.reject({ status: 400, msg: 'Bad request - duplicate like' })
       }
       if (likes === -1) {
-        await Route.deleteOne({_id: existingLike._id})
+        await CommentLike.deleteOne({_id: existingLike._id})
       }
     } else {
       if (likes === -1) {
         return Promise.reject({ status: 400, msg: 'Bad request - like not found' })
       }
-      const routeLike = new RouteLike ({
+      const commentLike = new CommentLike ({
         user_id: user,
-        route_id: id,
+        comment_id,
       })
-      await routeLike.save()
+      await commentLike.save()
     }
   }
 
-  const routeLikes = await Route.findById(id).select('likes')
-  if (routeLikes.likes === 0 && likes === -1) {
+  const commentLikes = await Comment.findById(comment_id).select('likes')
+  if (commentLikes.likes === 0 && likes === -1) {
     return Promise.reject({ status: 400, msg: 'Bad request - likes are already zero' })
   }
-  if (!likes) likes = routeLikes.likes
-  else likes = routeLikes.likes + likes
-  const result = await Route.findByIdAndUpdate(id, {
-    title,
-    description,
+  if (!likes) likes = commentLikes.likes
+  else likes = commentLikes.likes + likes
+  const result = await Comment.findByIdAndUpdate(comment_id, {
+    body,
     likes
   }, { new: true })
   return result
