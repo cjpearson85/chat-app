@@ -357,7 +357,7 @@ describe('Users', () => {
           followed_id: '6143a704366e787fcfb34282'
         }))
     })
-    it.only('rejects with 400 if user already followed', async () => {
+    it('rejects with 400 if user already followed', async () => {
       const testUserReq = {
         username: 'sonic_hedgehog',
         password: 'pizza'
@@ -375,7 +375,7 @@ describe('Users', () => {
         .send({ follow: '6143a704366e787fcfb34282' })
         .expect(400)
       expect(msg).toBe('User already followed')
-    });
+    })
   })
   describe('DELETE - /users/:user_id/following', () => {
     it('user in param unfollows user in request body', async () => {
@@ -422,7 +422,7 @@ describe('Users', () => {
         .send({ follow: '6143a704366e787fcfb34282' })
         .expect(400)
       expect(msg).toBe('User not followed')
-    });
+    })
   })
 })
 describe('Route', () => {
@@ -818,9 +818,13 @@ describe('Poi', () => {
     it('should update a POI', async () => {
       const { body: { comment: { body: commentBody } } } = await request
         .patch('/api/poi/6143a705366e787fcfb342f4')
+        .send({})
         .expect(200)
     })
   })
+  describe('DELETE - /poi/:poi_id', () => {
+    
+  });
 })
 describe('Comments', () => {
   describe('GET - /routes/:route_id/comments', () => {
@@ -870,7 +874,7 @@ describe('Comments', () => {
     })
   })
   xdescribe('PATCH - /comments/:comment_id', () => {
-    it('should edit a comment body', async () => {
+    it.only('should edit a comment body', async () => {
       const { body: { comment: { body: commentBody } } } = await request
         .patch('/api/comments/6143a705366e787fcfb342d8')
         .send({ body: 'I updated my comment!' })
@@ -878,4 +882,7 @@ describe('Comments', () => {
       expect(commentBody).toBe('I updated my comment!')
     })
   })
+  describe('DELETE - /comments/:comment_id', () => {
+    
+  });
 })

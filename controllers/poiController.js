@@ -1,6 +1,8 @@
 const {
   selectPoisByRoute,
-  insertPoi
+  insertPoi,
+  updatePoi,
+  removePoi
 } = require('../models/poisModels')
 
 exports.getPois = (req, res, next) => {
@@ -22,6 +24,17 @@ exports.postPoi = (req, res, next) => {
 
 exports.patchPoi = (req, res, next) => {
   console.log('in here')
+  updatePoi(req.body, req.params)
+    .then(poi => {
+      res.status(200).send({ poi })
+    })
+    .catch(next)
 }
 
-exports.deletePoi = (req, res, next) => {}
+exports.deletePoi = (req, res, next) => {
+  removePoi(req.params)
+    .then(() => {
+      res.status(204).send()
+    })
+    .catch(next)
+}

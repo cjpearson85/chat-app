@@ -6,7 +6,6 @@ const Follow = require('../schemas/follow')
 const mongoose = require('mongoose')
 const db = require('../db/connection')
 const { generateSalt, hashPassword, validPassword } = require('../utils')
-const { findOneAndDelete } = require('../schemas/user')
 
 exports.selectUsers = async (queries) => {
   const { limit = 10, page = 1 } = queries
@@ -139,19 +138,22 @@ exports.selectLikes = async ({ user_id }, { like_type }) => {
     }
   }
   if (like_type === 'comments') {
-    return { comments: await CommentLike.find({ user_id }) }
+    return { comments: await CommentLike.find({ user_id })
+      .sort({createdAt: -1}) }
   }
   if (like_type === 'routes') {
-    return { routes: await RouteLike.find({ user_id }) }
+    return { routes: await RouteLike.find({ user_id })
+      .sort({createdAt: -1}) }
   }
   if (like_type === 'pois') {
-    return { pois: await PoiLike.find({ user_id }) }
+    return { pois: await PoiLike.find({ user_id })
+      .sort({createdAt: -1}) }
   }
   if (!like_type) {
     const [comments, routes, pois] = await Promise.all([
-      CommentLike.find({ user_id }),
-      RouteLike.find({ user_id }),
-      PoiLike.find({ user_id })
+      CommentLike.find({ user_id }).sort({createdAt: -1}),
+      RouteLike.find({ user_id }).sort({createdAt: -1}),
+      PoiLike.find({ user_id }).sort({createdAt: -1})
     ])
     return { 
       comments,

@@ -6,7 +6,7 @@ var poiLikeSchema = new mongoose.Schema(
     poi_id: { type: Schema.Types.ObjectId, ref: 'Poi', required: true },
     user_id: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   },
-  { timestamp: true }
+  { timestamps: true }
 )
 
 const PoiLike = mongoose.model('PoiLike', poiLikeSchema)

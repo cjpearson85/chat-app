@@ -28,3 +28,11 @@ exports.insertPoi = async (body, { route_id }) => {
   const result = await poi.save()
   return result
 }
+
+exports.updatePoi = async (reqBody, { poi_id }) => {
+  
+}
+
+exports.removePoi = async ({ poi_id }) => {
+
+}

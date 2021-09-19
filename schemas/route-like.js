@@ -6,7 +6,7 @@ var routeLikeSchema = new mongoose.Schema(
     route_id: { type: Schema.Types.ObjectId, ref: 'Route' },
     user_id: { type: Schema.Types.ObjectId, ref: 'User' },
   },
-  { timestamp: true }
+  { timestamps: true }
 )
 
 const RouteLike = mongoose.model('RouteLike', routeLikeSchema)
