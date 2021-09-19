@@ -903,6 +903,125 @@ describe('Comments', () => {
         .expect(200)
       expect(commentBody).toBe('I updated my comment!')
     })
+    it('should respond with 400 if route does not exist', async () => {
+      const update = { body: 'My New Text' }
+      const result = await request
+        .patch('/api/comments/antsComment')
+        .send(update)
+        .expect(400)
+        .then((user) => {
+          expect(user.body.msg).toEqual('Bad request')
+      })
+    })
+    it('should increment a comments likes', async() => {
+      const { body: { user: { _id } } } = await request
+        .post('/api/signup')
+        .send({
+          username: 'sonic_hedgehog',
+          password: 'pizza',
+        })
+        .expect(201)
+      const { body: { comment: { likes: oldLikes } } } = await request
+        .patch('/api/comments/6143a705366e787fcfb342da')
+        .send({body: 'new body'})
+        .expect(200)
+      const { body: { comment: { likes: newLikes } } } = await request
+        .patch('/api/comments/6143a705366e787fcfb342da')
+        .send({likes: 1, user: _id})
+        .expect(200)
+      expect(newLikes).toBe(oldLikes + 1)
+    })
+    it('should cancel a like', async () => {
+      await request
+        .patch(`/api/comments/6143a705366e787fcfb342da`)
+        .send({ likes: 1, user: '6143a704366e787fcfb34274'})
+        .expect(200)
+      const { body: { likes: { comments } } } = await request
+        .get('/api/users/6143a704366e787fcfb34274/likes?like_type=comments')
+        .expect(200)
+      expect(comments.map(comment => comment.comment_id)
+        .includes('6143a705366e787fcfb342da'))
+        .toBe(true)
+      await request
+        .patch(`/api/comments/6143a705366e787fcfb342da`)
+        .send({ likes: -1, user: '6143a704366e787fcfb34274'})
+        .expect(200)
+      const { body: { likes: { comments: updated } } } = await request
+        .get('/api/users/6143a704366e787fcfb34274/likes')
+        .expect(200)
+      expect(updated.map(comment => comment.comment_id)
+        .includes('6143a705366e787fcfb342da'))
+        .toBe(false)
+    })
+    it('should reject with 400 duplicate like by same user', async () => {
+      const { body: { user: { _id } } } = await request
+        .post('/api/signup')
+        .send({
+          username: 'sonic_hedgehog',
+          password: 'pizza',
+        })
+        .expect(201)
+      const testReq = {
+        likes: 1,
+        user: _id
+      }
+      await request
+        .patch('/api/comments/6143a705366e787fcfb342da')
+        .send(testReq)
+        .expect(200)
+      const { body: { msg } } = await request
+        .patch('/api/comments/6143a705366e787fcfb342da')
+        .send(testReq)
+        .expect(400)
+      expect(msg).toBe("Bad request - duplicate like")
+    })
+    it('should reject with 400 if cancelling non-existent like', async () => {
+      const { body: { user: { _id } } } = await request
+        .post('/api/signup')
+        .send({
+          username: 'sonic_hedgehog',
+          password: 'pizza',
+        })
+      const { body: { msg } } = await request
+        .patch('/api/comments/6143a705366e787fcfb342da')
+        .send({ likes: -1, user: _id})
+        .expect(400)
+      expect(msg).toBe("Bad request - like not found")
+    })
+    it('reject 400, no user provided', async () => {
+      const { body: { msg } } = await request
+        .patch('/api/comments/6143a705366e787fcfb342da')
+        .send({ likes: -1})
+        .expect(400)
+      expect(msg).toBe("Bad request - missing field(s)")
+    })
+    it.only('should decrement likes', async () => {
+      const testReq = {
+        user_id: '6143a704366e787fcfb34276',
+        body: 'here is what I think',
+      }
+      const { body: { comment: newComment } } = await request
+        .post('/api/routes/6143a704366e787fcfb34287/comments')
+        .send(testReq).expect(201)
+      const testReq2 = {
+        likes: 1,
+        user: '6143a704366e787fcfb34282'
+      }
+      const { body: { comment: { likes: oldLikes } } } = await request
+        .patch(`/api/comments/${newComment._id}`)
+        .send(testReq2)
+        .expect(200)
+      expect(oldLikes).toBe(1)
+      const testReq3 = {
+        likes: -1,
+        user: '6143a704366e787fcfb34282'
+      }
+      const { body: { comment: { likes: newLikes } } } = await request
+        .patch(`/api/comments/${newComment._id}`)
+        .send(testReq3)
+        .expect(200)
+      expect(newLikes).toBe(0)
+    })
   })
   describe('DELETE - /comments/:comment_id', () => {
     it('should delete a comment given as param', async () => {
