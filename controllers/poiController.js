@@ -23,7 +23,6 @@ exports.postPoi = (req, res, next) => {
 }
 
 exports.patchPoi = (req, res, next) => {
-  console.log('in here')
   updatePoi(req.body, req.params)
     .then(poi => {
       res.status(200).send({ poi })

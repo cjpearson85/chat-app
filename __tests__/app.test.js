@@ -836,16 +836,145 @@ describe('Poi', () => {
       expect(msg).toBe('Bad request')
     })
   })
-  xdescribe('PATCH - /poi/:poi_id', () => {
+  describe('PATCH - /poi/:poi_id', () => {
     it('should update a POI', async () => {
-      const { body: { comment: { body: commentBody } } } = await request
+      const { body: { poi: { photo } } } = await request
         .patch('/api/poi/6143a705366e787fcfb342f4')
-        .send({})
+        .send({photo: 'http://newphoto'})
         .expect(200)
+      expect(photo).toBe('http://newphoto')
+    })
+    it('should respond with 400 if poi does not exist', async () => {
+      const update = { narration: 'My New Text' }
+      const result = await request
+        .patch('/api/poi/antsPoi')
+        .send(update)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toEqual('Bad request')
+      })
+    })
+    it('should increment a POIs likes', async() => {
+      const { body: { user: { _id } } } = await request
+        .post('/api/signup')
+        .send({
+          username: 'sonic_hedgehog',
+          password: 'pizza',
+        })
+        .expect(201)
+      const { body: { poi: { likes: oldLikes } } } = await request
+        .patch('/api/poi/6143a705366e787fcfb34303')
+        .send({narration: 'new body'})
+        .expect(200)
+      const { body: { poi: { likes: newLikes } } } = await request
+        .patch('/api/poi/6143a705366e787fcfb34303')
+        .send({likes: 1, user: _id})
+        .expect(200)
+      expect(newLikes).toBe(oldLikes + 1)
+    })
+    it('should cancel a like', async () => {
+      await request
+        .patch(`/api/poi/6143a705366e787fcfb34303`)
+        .send({ likes: 1, user: '6143a704366e787fcfb34274'})
+        .expect(200)
+      const { body: { likes: { pois } } } = await request
+        .get('/api/users/6143a704366e787fcfb34274/likes?like_type=pois')
+        .expect(200)
+      expect(pois.map(poi => poi.poi_id)
+        .includes('6143a705366e787fcfb34303'))
+        .toBe(true)
+      await request
+        .patch(`/api/poi/6143a705366e787fcfb34303`)
+        .send({ likes: -1, user: '6143a704366e787fcfb34274'})
+        .expect(200)
+      const { body: { likes: { pois: updated } } } = await request
+        .get('/api/users/6143a704366e787fcfb34274/likes?like_type=pois')
+        .expect(200)
+      expect(updated.map(poi => poi.poi_id)
+        .includes('6143a705366e787fcfb34303'))
+        .toBe(false)
+    })
+    it('should reject with 400 duplicate like by same user', async () => {
+      const { body: { user: { _id } } } = await request
+        .post('/api/signup')
+        .send({
+          username: 'sonic_hedgehog',
+          password: 'pizza',
+        })
+        .expect(201)
+      const testReq = {
+        likes: 1,
+        user: _id
+      }
+      await request
+        .patch('/api/poi/6143a705366e787fcfb34303')
+        .send(testReq)
+        .expect(200)
+      const { body: { msg } } = await request
+        .patch('/api/poi/6143a705366e787fcfb34303')
+        .send(testReq)
+        .expect(400)
+      expect(msg).toBe("Bad request - duplicate like")
+    })
+    it('should reject with 400 if cancelling non-existent like', async () => {
+      const { body: { user: { _id } } } = await request
+        .post('/api/signup')
+        .send({
+          username: 'sonic_hedgehog',
+          password: 'pizza',
+        })
+      const { body: { msg } } = await request
+        .patch('/api/poi/6143a705366e787fcfb34303')
+        .send({ likes: -1, user: _id})
+        .expect(400)
+      expect(msg).toBe("Bad request - like not found")
+    })
+    it('reject 400, no user provided', async () => {
+      const { body: { msg } } = await request
+        .patch('/api/poi/6143a705366e787fcfb34303')
+        .send({ likes: -1})
+        .expect(400)
+      expect(msg).toBe("Bad request - missing field(s)")
+    })
+    it('should decrement likes', async () => {
+      const testReq = {
+        user_id: '6143a704366e787fcfb34278',
+        narration: 'what an interesting place!',
+        coords: {
+          latitude: '53.5645390',
+          longitude: '-1.4798400',
+          time: '2019-01-22T18:33:09Z',
+        },
+      }
+      const { body: { poi: newPoi } } = await request
+        .post('/api/routes/6143a704366e787fcfb34287/poi')
+        .send(testReq).expect(201)
+      const testReq2 = {
+        likes: 1,
+        user: '6143a704366e787fcfb34282'
+      }
+      const { body: { poi: { likes: oldLikes } } } = await request
+        .patch(`/api/poi/${newPoi._id}`)
+        .send(testReq2)
+        .expect(200)
+      expect(oldLikes).toBe(1)
+      const testReq3 = {
+        likes: -1,
+        user: '6143a704366e787fcfb34282'
+      }
+      const { body: { poi: { likes: newLikes } } } = await request
+        .patch(`/api/poi/${newPoi._id}`)
+        .send(testReq3)
+        .expect(200)
+      expect(newLikes).toBe(0)
     })
   })
   describe('DELETE - /poi/:poi_id', () => {
-    
+    it('should delete a poi given as param', async () => {
+      await request
+        .delete('/api/poi/6143a705366e787fcfb342f5')
+        .expect(204)
+    })
   })
 })
 describe('Comments', () => {
@@ -903,14 +1032,14 @@ describe('Comments', () => {
         .expect(200)
       expect(commentBody).toBe('I updated my comment!')
     })
-    it('should respond with 400 if route does not exist', async () => {
+    it('should respond with 400 if comment does not exist', async () => {
       const update = { body: 'My New Text' }
       const result = await request
         .patch('/api/comments/antsComment')
         .send(update)
         .expect(400)
-        .then((user) => {
-          expect(user.body.msg).toEqual('Bad request')
+        .then((res) => {
+          expect(res.body.msg).toEqual('Bad request')
       })
     })
     it('should increment a comments likes', async() => {
@@ -995,7 +1124,7 @@ describe('Comments', () => {
         .expect(400)
       expect(msg).toBe("Bad request - missing field(s)")
     })
-    it.only('should decrement likes', async () => {
+    it('should decrement likes', async () => {
       const testReq = {
         user_id: '6143a704366e787fcfb34276',
         body: 'here is what I think',
