@@ -90,7 +90,7 @@ exports.getFollowers = (req, res, next) => {
 exports.postFollow = (req, res, next) => {
   insertFollow(req.params, req.body)
     .then((follow) => {
-      res.status(200).send({ follow })
+      res.status(201).send({ follow })
     })
     .catch(next)
 }

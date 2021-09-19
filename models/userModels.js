@@ -6,6 +6,7 @@ const Follow = require('../schemas/follow')
 const mongoose = require('mongoose')
 const db = require('../db/connection')
 const { generateSalt, hashPassword, validPassword } = require('../utils')
+const { findOneAndDelete } = require('../schemas/user')
 
 exports.selectUsers = async (queries) => {
   const { limit = 10, page = 1 } = queries
@@ -171,9 +172,36 @@ exports.selectFollowers = async ({ user_id }) => {
 }
 
 exports.insertFollow = async ({ user_id }, { follow }) => {
-
+  const existingFollow = await Follow.findOne({
+    follower_id: user_id,
+    followed_id: follow
+  })
+  if (!follow) {
+    return Promise.reject({ status: 400, msg: 'Bad request - missing field(s)' })
+  }
+  if (existingFollow) {
+    return Promise.reject({ status: 400, msg: 'User already followed' })
+  } else {
+    const newFollow = new Follow({
+      follower_id: user_id,
+      followed_id: follow
+    })
+    newFollow.save()
+    return newFollow
+  }
 }
 
-exports.deleteFollow = async ({ user_id }, { follow }) => {
-
+exports.removeFollow = async ({ user_id }, { follow }) => {
+  const existingFollow = await Follow.findOne({
+    follower_id: user_id,
+    followed_id: follow
+  })
+  if (!follow) {
+    return Promise.reject({ status: 400, msg: 'Bad request - missing field(s)' })
+  }
+  if (!existingFollow) {
+    return Promise.reject({ status: 400, msg: 'User not followed' })
+  } else {
+    await Follow.findByIdAndDelete(existingFollow._id)
+  }
 }

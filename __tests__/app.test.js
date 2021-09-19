@@ -336,13 +336,60 @@ describe('Users', () => {
         )
       })
     })
-  });
+  })
   describe('POST - /users/:user_id/following', () => {
-    
-  });
+    it('user in param follows user in request body', async () => {
+      const testUserReq = {
+        username: 'sonic_hedgehog',
+        password: 'pizza'
+      }
+      const { body: { user: newUser } } = await request
+        .post('/api/signup')
+        .expect(201)
+        .send(testUserReq)
+      const { body: { follow } } = await request
+        .post(`/api/users/${newUser._id}/following`)
+        .send({ follow: '6143a704366e787fcfb34282' })
+        .expect(201)
+      expect(follow).toEqual(
+        expect.objectContaining({
+        follower_id: newUser._id,
+        followed_id: '6143a704366e787fcfb34282'
+      }))
+    })
+  })
   describe('DELETE - /users/:user_id/following', () => {
-    
-  });
+    it.only('user in param unfollows user in request body', async () => {
+      const testUserReq = {
+        username: 'sonic_hedgehog',
+        password: 'pizza'
+      }
+      const { body: { user: newUser } } = await request
+        .post('/api/signup')
+        .expect(201)
+        .send(testUserReq)
+      await request
+        .post(`/api/users/${newUser._id}/following`)
+        .send({ follow: '6143a704366e787fcfb34282' })
+        .expect(201)
+      const { body: { following } } = await request
+        .get(`/api/users/${newUser._id}/following`)
+        .expect(200)
+      expect(following.map(followed => followed.followed_id)
+        .includes('6143a704366e787fcfb34282'))
+          .toBe(true)
+      await request
+        .delete(`/api/users/${newUser._id}/following`)
+        .send({ follow: '6143a704366e787fcfb34282' })
+        .expect(204)
+      const { body: { following: updatedFollowing } } = await request
+        .get(`/api/users/${newUser._id}/following`)
+        .expect(200)
+      expect(updatedFollowing.map(followed => followed.followed_id)
+        .includes('6143a704366e787fcfb34282'))
+          .toBe(false)
+    })
+  })
 })
 describe('Route', () => {
   describe('GET - /routes', () => {
