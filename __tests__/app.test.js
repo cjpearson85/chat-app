@@ -497,7 +497,7 @@ describe('Route', () => {
       expect(msg).toBe('Bad request')
     })
   })
-  describe.only('PATCH - /routes/:routes_id', () => {
+  describe('PATCH - /routes/:routes_id', () => {
     it('should update a route with new info', async () => {
       const update = { title: 'My New Title' }
       const result = await request
@@ -537,7 +537,7 @@ describe('Route', () => {
         .send(testReq)
         .expect(200)
       expect(newLikes).toBe(oldLikes + 1)
-    });
+    })
     it('should reject with 400 duplicate like by same user', async () => {
       const { body: { user: { _id } } } = await request
         .post('/api/signup')
@@ -562,24 +562,54 @@ describe('Route', () => {
     })
     it('should reject with 400 if cancelling non-existent like', async () => {
       const { body: { user: { _id } } } = await request
-      .post('/api/signup')
-      .send({
-        username: 'sonic_hedgehog',
-        password: 'pizza',
-      })
+        .post('/api/signup')
+        .send({
+          username: 'sonic_hedgehog',
+          password: 'pizza',
+        })
       const { body: { msg } } = await request
-      .patch('/api/routes/6143a704366e787fcfb34286')
-      .send({ likes: -1, user: _id})
-      .expect(400)
-    expect(msg).toBe("Bad request - like not found")
+        .patch('/api/routes/6143a704366e787fcfb34286')
+        .send({ likes: -1, user: _id})
+        .expect(400)
+      expect(msg).toBe("Bad request - like not found")
     })
     it('reject 400, no user provided', async () => {
       const { body: { msg } } = await request
-      .patch('/api/routes/6143a704366e787fcfb34286')
-      .send({ likes: -1})
-      .expect(400)
-    expect(msg).toBe("Bad request - missing field(s)")
-    });
+        .patch('/api/routes/6143a704366e787fcfb34286')
+        .send({ likes: -1})
+        .expect(400)
+      expect(msg).toBe("Bad request - missing field(s)")
+    })
+    it('should decrement likes', async () => {
+      const testDate = new Date()
+      const testReq = {
+        title: 'My First Post',
+        description: 'my first walk',
+        user_id: '6143a704366e787fcfb34282',
+        coords: parseStrava(testCoords),
+        start_time_date: testDate,
+      }
+      const { body: { route: newRoute } } = await request
+      .post('/api/routes').send(testReq).expect(201)
+      const testReq2 = {
+        likes: 1,
+        user: '6143a704366e787fcfb34282'
+      }
+      const { body: { route: { likes: oldLikes } } } = await request
+        .patch(`/api/routes/${newRoute._id}`)
+        .send(testReq2)
+        .expect(200)
+      expect(oldLikes).toBe(1)
+      const testReq3 = {
+        likes: -1,
+        user: '6143a704366e787fcfb34282'
+      }
+      const { body: { route: { likes: newLikes } } } = await request
+        .patch(`/api/routes/${newRoute._id}`)
+        .send(testReq3)
+        .expect(200)
+      expect(newLikes).toBe(0)
+    })
   })
   describe('DELETE - /routes/:route_id', () => {
     it('should remove a route from the db when passed a route_id', async () => {
