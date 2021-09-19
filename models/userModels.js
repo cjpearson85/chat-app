@@ -61,6 +61,11 @@ exports.updateUserById = async (user_id, body) => {
   return result
 }
 
+exports.removeUserById = async (user_id) => {
+  const result = await User.findByIdAndDelete(user_id)
+  return result
+}
+
 exports.insertUser = async ({ username, name, bio, avatar_url, password }) => {
   if (!username || !password) {
     return Promise.reject({ status: 400, msg: 'Bad request' })

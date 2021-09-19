@@ -8,35 +8,33 @@ exports.selectRoutes = async (queries) => {
     order = 'desc',
     limit = 5,
     page = 1,
-    user_id
+    user_id,
   } = queries
 
-  if (!['start_time_date', 'likes']
-    .includes(sort_by) || 
-      !['asc', 'desc'].includes(order) ||
-      !Number.isInteger(parseInt(limit)) ||
-      !Number.isInteger(parseInt(page))) {
-    return Promise.reject({status: 400, msg: 'Bad request - invalid sort'})
+  if (
+    !['start_time_date', 'likes'].includes(sort_by) ||
+    !['asc', 'desc'].includes(order) ||
+    !Number.isInteger(parseInt(limit)) ||
+    !Number.isInteger(parseInt(page))
+  ) {
+    return Promise.reject({ status: 400, msg: 'Bad request - invalid sort' })
   }
 
-  const query = user_id? {user_id} : {}
-  
-  const result = await Route.paginate(
-    query,
-    {
-      sort: (order === 'desc' ? '-' : '') + sort_by,
-      offset: (page - 1) * limit,
-      limit
-    }
-  )
+  const query = user_id ? { user_id } : {}
+
+  const result = await Route.paginate(query, {
+    sort: (order === 'desc' ? '-' : '') + sort_by,
+    offset: (page - 1) * limit,
+    limit,
+  })
   if (page > result.totalPages) {
-    return Promise.reject({status: 404, msg: 'Resource not found'})
+    return Promise.reject({ status: 404, msg: 'Resource not found' })
   }
   return {
     routes: result.docs,
     totalPages: result.totalPages,
     page: result.page,
-    totalResults: result.totalDocs
+    totalResults: result.totalDocs,
   }
 }
 
@@ -48,7 +46,7 @@ exports.insertRoute = async ({
   start_time_date,
 }) => {
   if (!coords || !user_id || !title || !start_time_date) {
-    return Promise.reject({status: 400, msg: 'Bad request'})
+    return Promise.reject({ status: 400, msg: 'Bad request' })
   }
   const route = new Route({
     title,
@@ -62,7 +60,16 @@ exports.insertRoute = async ({
 }
 
 exports.selectRouteById = async (id) => {
-
   const result = await Route.findOne({ _id: `${id}` })
+  return result
+}
+
+exports.updateRouteById = async (id, body) => {
+  const result = await Route.findByIdAndUpdate(id, body, { new: true })
+  return result
+}
+
+exports.removeRouteById = async (id) => {
+  const result = await Route.findByIdAndDelete(id)
   return result
 }

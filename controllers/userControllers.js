@@ -4,6 +4,7 @@ const {
   updateUserById,
   insertUser,
   login,
+  removeUserById,
 } = require('../models/userModels')
 
 exports.getUsers = (req, res, next) => {
@@ -16,17 +17,30 @@ exports.getUsers = (req, res, next) => {
 
 exports.getUserById = (req, res, next) => {
   const { user_id } = req.params
-  selectUserById(user_id).then((user) => {
-    res.status(200).send({ user })
-  })
+  selectUserById(user_id)
+    .then((user) => {
+      res.status(200).send({ user })
+    })
+    .catch(next)
 }
 
 exports.patchUserById = (req, res, next) => {
   const { user_id } = req.params
   const { body } = req
-  updateUserById(user_id, body).then((user) => {
-    res.status(200).send({ user })
-  })
+  updateUserById(user_id, body)
+    .then((user) => {
+      res.status(200).send({ user })
+    })
+    .catch(next)
+}
+
+exports.deleteUserById = (req, res, next) => {
+  const { user_id } = req.params
+  removeUserById(user_id)
+    .then((user) => {
+      res.status(204).send()
+    })
+    .catch(next)
 }
 
 exports.postUser = (req, res, next) => {

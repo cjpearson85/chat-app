@@ -106,7 +106,7 @@ describe('Users', () => {
       )
     })
   })
-  describe.only('POST - /users/:user_id', () => {
+  describe('PATCH - /users/:user_id', () => {
     it('should update and return a user profile', async () => {
       const update = { bio: 'will this test bio update' }
       const result = await request
@@ -131,19 +131,32 @@ describe('Users', () => {
           expect(user.body.user.username).toEqual(update.username)
         })
     })
-    it('should respond with 404 is user doesnt exist', async () => {
+    it('should respond with 400 if user does not exist', async () => {
       const update = { bio: 'will this test bio update' }
       const result = await request
         .patch('/api/users/ant')
         .send(update)
-        .expect(404)
+        .expect(400)
         .then((user) => {
-          expect(user.body.user.bio).toEqual(update.bio)
+          expect(user.body.msg).toEqual('Bad request')
         })
     })
   })
-  describe('POST - /login', () => {})
-  describe('POST - /signup', () => {})
+  describe('DELETE - /users/:user_id', () => {
+    it('should delete user when passed a user_id', async () => {
+      const result = await request
+        .delete('/api/users/6143a704366e787fcfb34282')
+        .expect(204)
+    })
+    it('should respond with 400 if user does not exist', async () => {
+      const result = await request
+        .delete('/api/users/ant')
+        .expect(400)
+        .then((user) => {
+          expect(user.body.msg).toEqual('Bad request')
+        })
+    })
+  })
   describe('POST - /signup', () => {
     it('should create a user', async () => {
       const testReq = {
@@ -427,6 +440,43 @@ describe('Route', () => {
         body: { msg },
       } = await request.post('/api/routes').send(testReq).expect(400)
       expect(msg).toBe('Bad request')
+    })
+  })
+  describe('PATCH - /routes/:routes_id', () => {
+    it('should update a route with new info', async () => {
+      const update = { title: 'My New Title' }
+      const result = await request
+        .patch('/api/routes/6143a704366e787fcfb34286')
+        .send(update)
+        .expect(200)
+        .then((route) => {
+          expect(route.body.route.title).toEqual(update.title)
+        })
+    })
+    it('should respond with 400 if route does not exist', async () => {
+      const update = { title: 'My New Title' }
+      const result = await request
+        .patch('/api/routes/antsRoute')
+        .send(update)
+        .expect(400)
+        .then((user) => {
+          expect(user.body.msg).toEqual('Bad request')
+        })
+    })
+  })
+  describe('DELETE - /routes/:route_id', () => {
+    it('should remove a route from the db when passed a route_id', async () => {
+      const result = await request
+        .delete('/api/routes/6143a704366e787fcfb34286')
+        .expect(204)
+    })
+    it('should return a 404 if route does not exist', async () => {
+      const result = await request
+        .delete('/api/routes/ant')
+        .expect(400)
+        .then((user) => {
+          expect(user.body.msg).toEqual('Bad request')
+        })
     })
   })
 })

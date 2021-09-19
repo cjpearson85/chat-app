@@ -2,13 +2,14 @@ const {
   selectRoutes,
   insertRoute,
   selectRouteById,
+  updateRouteById,
+  removeRouteById,
 } = require('../models/routesModels')
 
 exports.getRoutes = (req, res, next) => {
   selectRoutes(req.query)
     .then((routes) => {
-      res.status(200)
-        .send(routes)
+      res.status(200).send(routes)
     })
     .catch(next)
 }
@@ -17,7 +18,11 @@ exports.getRouteById = (req, res, next) => {
   const { route_id } = req.params
   selectRouteById(route_id)
     .then((route) => {
-      res.status(200).send({ route })
+      if (route === null) {
+        res.status(404).send({ msg: 'Not Found' })
+      } else {
+        res.status(200).send({ route })
+      }
     })
     .catch(next)
 }
@@ -30,8 +35,23 @@ exports.postRoute = (req, res, next) => {
     .catch(next)
 }
 
-exports.deleteRoute = (req, res, next) => {}
+exports.deleteRoute = (req, res, next) => {
+  const { route_id } = req.params
+  removeRouteById(route_id)
+    .then((route) => {
+      res.status(204).send()
+    })
+    .catch(next)
+}
 
 exports.getUserRoutes = (req, res, next) => {}
 
-exports.patchRoute = (req, res, next) => {}
+exports.patchRoute = (req, res, next) => {
+  const { route_id } = req.params
+  const { body } = req
+  updateRouteById(route_id, body)
+    .then((route) => {
+      res.status(200).send({ route })
+    })
+    .catch(next)
+}
