@@ -1,10 +1,10 @@
+import S3 from "aws-sdk/clients/s3";
+import { Credentials } from "aws-sdk";
+import { v4 as uuid } from "uuid";
 const Poi = require('../schemas/poi')
 const PoiLike = require('../schemas/poi-like')
 const db = require('../db/connection')
 const mongoose = require('mongoose')
-import S3 from "aws-sdk/clients/s3";
-import { Credentials } from "aws-sdk";
-import { v4 as uuid } from "uuid";
 
 exports.selectPoisByRoute = async (route_id) => {
   const result = await Poi.find({ route_id: `${route_id}` })
