@@ -116,7 +116,6 @@ exports.generateUri = async () => {
     Bucket: process.env.AWSBUCKETNAME,
     Key: `${fileId}.jpg`,
     ContentType: "image/jpeg",
-    Acl: "public-read",
     Expires: signedUrlExpireSeconds,
   });
 
