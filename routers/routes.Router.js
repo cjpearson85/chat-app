@@ -6,13 +6,10 @@ const {
   getRouteById,
   patchRoute,
 } = require('../controllers/routesController')
-const {
-  getPois,
-  postPoi
-} = require('../controllers/poiController')
+const { getPois, postPoi } = require('../controllers/poiController')
 const {
   getComments,
-  postComment
+  postComment,
 } = require('../controllers/commentsContoller')
 
 routesRouter
