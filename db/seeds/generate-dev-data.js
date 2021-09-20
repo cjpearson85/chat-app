@@ -19,9 +19,11 @@ const parseStrava = (data) => {
 
 let usersData = []
 for (let i = 0; i < 22; i++) {
-  const name = faker.name.firstName() + ' ' + faker.name.lastName() 
+  const firstName = faker.name.firstName()
+  const lastName = faker.name.lastName()
+  const name = firstName + ' ' + lastName 
   const avatar_url = faker.image.imageUrl()
-  const username = faker.internet.userName()
+  const username = firstName + lastName
   const salt = generateSalt()
   const hash = hashPassword(username, salt)
   const bio = faker.lorem.paragraph()
