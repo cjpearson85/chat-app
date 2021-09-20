@@ -100,7 +100,8 @@ exports.generateUri = async () => {
   const client = new S3Client({ region: process.env.AWSREGION });
   const command = new GetObjectCommand({
     Bucket: process.env.AWSBUCKETNAME, 
-    Key: process.env.AWSSECRETACCESSKEY
+    Key: process.env.AWSSECRETACCESSKEY,
+    ACL:'public-read'
   })
   const url = await getSignedUrl(client, command, { expiresIn: 3600 });
   return url
