@@ -23,7 +23,8 @@ exports.selectComments = async (queries, { route_id }) => {
     {
       sort: (order === 'desc' ? '-' : '') + sort_by,
       offset: (page - 1) * limit,
-      limit
+      limit,
+      populate: 'user_id'
     }
   )
   if (page > result.totalPages) {

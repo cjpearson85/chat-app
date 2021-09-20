@@ -27,6 +27,7 @@ exports.selectRoutes = async (queries) => {
     sort: (order === 'desc' ? '-' : '') + sort_by,
     offset: (page - 1) * limit,
     limit,
+    populate: 'user_id'
   })
   if (page > result.totalPages) {
     return Promise.reject({ status: 404, msg: 'Resource not found' })
@@ -62,6 +63,7 @@ exports.insertRoute = async ({
 
 exports.selectRouteById = async (id) => {
   const result = await Route.findOne({ _id: `${id}` })
+    .populate('user_id')
   return result
 }
 

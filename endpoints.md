@@ -69,13 +69,13 @@ status: 204 (user in request body is unfollowed)
 ## get /routes
 default limit: 5
 default sort: start_time_date, desc
-returns: _id, title, description, user_id, likes
+returns: _id, title, description, user_id: {_id, username ...}, likes
     coords: {latitude, longitude, time}, start_time_date
 queries: limit, page, order (= asc, desc), 
     sort_by (= start_time_date, likes), user_id
 
 ## get/routes/:route_id
-returns: _id, title, description, user_id, likes
+returns: _id, title, description, user_id: {_id, username ...}, likes
     coords: {latitude, longitude, time}, start_time_date
 
 ## post /routes
@@ -86,7 +86,7 @@ request {
     coords: [{latitude, longitude, time}, ...]
     start_time_date
 }
-returns: _id, title, description, user_id
+returns: _id, title, description, user_id: {_id, username ...}
     coords: {latitude, longitude, time}, start_time_date
 
 ## patch /routes/:route_id
@@ -95,7 +95,7 @@ request {
     likes (= 1, -1)
     user (required if like is given)
 }
-returns: _id, title, description, user_id, likes
+returns: _id, title, description, user_id: {_id, username ...}, likes
     coords: {latitude, longitude, time}, start_time_date
 
 ## delete /routes/:route_id
@@ -130,7 +130,7 @@ status: 204
 ## get /routes/:route_id/comments
 default limit: 15
 default sort: createdAt desc
-returns: _id, route_id, user_id, body, likes, createdAt
+returns: _id, route_id, user_id: {_id, username ...}, body, likes, createdAt
 queries: limit, page, sort_by (= likes, createdAt), order (= asc, desc)
 
 ## post /routes/:route_id/comments
