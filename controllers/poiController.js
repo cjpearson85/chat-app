@@ -3,6 +3,7 @@ const {
   insertPoi,
   updatePoi,
   removePoi,
+  generateUri
 } = require('../models/poisModels')
 const { uploadImage } = require('../models/s3')
 const multer = require('multer')
