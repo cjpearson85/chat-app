@@ -45,3 +45,11 @@ exports.deletePoi = (req, res, next) => {
     })
     .catch(next)
 }
+
+exports.getUri = (req, res, next) => {
+  generateUri()
+    .then((uri) => {
+      res.status(200).send({uri})
+    })
+    .catch(next)
+}
