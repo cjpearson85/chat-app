@@ -113,7 +113,7 @@ exports.generateUri = async () => {
   const signedUrlExpireSeconds = 60 * 15;
 
   const uri = await s3.getSignedUrlPromise("putObject", {
-    Bucket: process.env.S3_BUCKET,
+    Bucket: process.env.AWSBUCKETNAME,
     Key: `${fileId}.jpg`,
     ContentType: "image/jpeg",
     Acl: "public-read",
