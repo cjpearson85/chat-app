@@ -439,7 +439,7 @@ describe('Route', () => {
             _id: expect.any(String),
             title: expect.any(String),
             description: expect.any(String),
-            user_id: expect.any(String),
+            user_id: expect.any(Object),
             coords: expect.any(Array),
             start_time_date: expect.any(String),
           })
@@ -466,6 +466,7 @@ describe('Route', () => {
       } = await request
         .get('/api/routes?user_id=6143a704366e787fcfb34278')
         .expect(200)
+      console.log(routes)
       expect(routes).toBeInstanceOf(Array)
       expect(routes.length).toBeGreaterThan(0)
       routes.forEach((route) => {
@@ -474,7 +475,9 @@ describe('Route', () => {
             _id: expect.any(String),
             title: expect.any(String),
             description: expect.any(String),
-            user_id: '6143a704366e787fcfb34278',
+            user_id: expect.objectContaining({
+              _id: '6143a704366e787fcfb34278'
+            }),
             coords: expect.any(Array),
             start_time_date: expect.any(String),
           })
@@ -992,7 +995,7 @@ describe('Comments', () => {
           expect.objectContaining({
             _id: expect.any(String),
             route_id: '6143a704366e787fcfb3428f',
-            user_id: expect.any(String),
+            user_id: expect.any(Object),
             body: expect.any(String),
             likes: expect.any(Number),
             createdAt: expect.any(String),
