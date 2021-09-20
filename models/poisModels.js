@@ -1,6 +1,6 @@
-import S3 from "aws-sdk/clients/s3";
-import { Credentials } from "aws-sdk";
-import { v4 as uuid } from "uuid";
+const S3 = require("aws-sdk/clients/s3")
+const { Credentials } = require("aws-sdk")
+const { v4: uuid } = require("uuid")
 const Poi = require('../schemas/poi')
 const PoiLike = require('../schemas/poi-like')
 const db = require('../db/connection')
