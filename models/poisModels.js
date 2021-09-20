@@ -101,7 +101,7 @@ exports.generateUri = async () => {
   const command = new GetObjectCommand({
     Bucket: process.env.AWSBUCKETNAME, 
     Key: process.env.AWSSECRETACCESSKEY,
-    ACL:'public-read'
+    // ACL:'public-read'
   })
   const url = await getSignedUrl(client, command, { expiresIn: 3600 });
   return url
