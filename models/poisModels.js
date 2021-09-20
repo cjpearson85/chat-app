@@ -117,6 +117,7 @@ exports.generateUri = async () => {
     Key: `${fileId}.jpg`,
     ContentType: "image/jpeg",
     Expires: signedUrlExpireSeconds,
+    ACL: "public-read"
   });
 
   return uri
