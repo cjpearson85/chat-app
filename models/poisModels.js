@@ -4,9 +4,6 @@ const db = require('../db/connection')
 const mongoose = require('mongoose')
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
-const client = new S3Client(clientParams);
-const command = new GetObjectCommand(getObjectParams);
-const url = await getSignedUrl(client, command, { expiresIn: 3600 });
 
 exports.selectPoisByRoute = async (route_id) => {
   const result = await Poi.find({ route_id: `${route_id}` })
