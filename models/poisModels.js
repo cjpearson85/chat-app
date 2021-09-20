@@ -1,10 +1,12 @@
-const S3 = require("aws-sdk/clients/s3")
-const { Credentials } = require("aws-sdk")
-const { v4: uuid } = require("uuid")
 const Poi = require('../schemas/poi')
 const PoiLike = require('../schemas/poi-like')
 const db = require('../db/connection')
 const mongoose = require('mongoose')
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
+const client = new S3Client(clientParams);
+const command = new GetObjectCommand(getObjectParams);
+const url = await getSignedUrl(client, command, { expiresIn: 3600 });
 
 exports.selectPoisByRoute = async (route_id) => {
   const result = await Poi.find({ route_id: `${route_id}` })
@@ -98,27 +100,11 @@ exports.removePoi = async ({ poi_id }) => {
 }
 
 exports.generateUri = async () => {
-  const access = new Credentials({
-    accessKeyId: process.env.AWS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET,
-  });
-  
-  const s3 = new S3({
-    credentials: access,
-    region: process.env.S3_REGION,
-    signatureVersion: "v4",
-  });
-
-  const fileId = uuid();
-  const signedUrlExpireSeconds = 60 * 15;
-
-  const uri = await s3.getSignedUrlPromise("putObject", {
-    Bucket: process.env.AWSBUCKETNAME,
-    Key: `${fileId}.jpg`,
-    ContentType: "image/jpeg",
-    Expires: signedUrlExpireSeconds,
-    ACL: "public-read"
-  });
-
-  return uri
+  const client = new S3Client({ region: process.env.AWSREGION });
+  const command = new GetObjectCommand({
+    Bucket: process.env.AWSBUCKETNAME, 
+    Key: process.env.AWSSECRETACCESSKEY
+  })
+  const url = await getSignedUrl(client, command, { expiresIn: 3600 });
+  return url
 }
