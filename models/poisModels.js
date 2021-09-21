@@ -99,9 +99,9 @@ exports.generateUrl = async () => {
   const client = new S3Client({ region: process.env.AWSREGION })
   const command = new PutObjectCommand({
     Bucket: process.env.AWSBUCKETNAME,
-    Key: 'test.jpg',
+    Key: key,
     'content-type': 'photo/jpg',
   })
   const url = await getSignedUrl(client, command, { expiresIn: 3600 })
-  return { key, url }
+  return url
 }
