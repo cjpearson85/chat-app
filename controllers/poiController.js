@@ -3,7 +3,7 @@ const {
   insertPoi,
   updatePoi,
   removePoi,
-  generateUrl
+  generateUrl,
 } = require('../models/poisModels')
 const { uploadImage } = require('../models/s3')
 const multer = require('multer')
@@ -18,13 +18,8 @@ exports.getPois = (req, res, next) => {
 }
 
 exports.postPoi = async (req, res, next) => {
-  let imageLink
-  // if (req.body.photo) {
-  //   imageLink = await uploadImage(req.body.photo)
-  // }
-  const { user_id, narration, coords } = req.body
-  await insertPoi(user_id, imageLink, narration, coords, req.params)
-
+  const { user_id, photo, narration, coords } = req.body
+  await insertPoi(user_id, photo, narration, coords, req.params)
     .then((poi) => {
       res.status(201).send({ poi })
     })
@@ -33,7 +28,7 @@ exports.postPoi = async (req, res, next) => {
 
 exports.patchPoi = (req, res, next) => {
   updatePoi(req.body, req.params)
-    .then(poi => {
+    .then((poi) => {
       res.status(200).send({ poi })
     })
     .catch(next)
@@ -47,11 +42,10 @@ exports.deletePoi = (req, res, next) => {
     .catch(next)
 }
 
-
 exports.getUrl = (req, res, next) => {
   generateUrl()
     .then((uri) => {
-      res.status(200).send({uri})
+      res.status(200).send({ uri })
     })
     .catch(next)
 }
