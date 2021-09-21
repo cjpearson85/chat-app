@@ -3,7 +3,7 @@ const PoiLike = require('../schemas/poi-like')
 const db = require('../db/connection')
 const mongoose = require('mongoose')
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner")
-const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3")
+const { S3Client, GetObjectCommand, PutObjectCommand } = require("@aws-sdk/client-s3")
 
 exports.selectPoisByRoute = async (route_id) => {
   const result = await Poi.find({ route_id: `${route_id}` })
@@ -98,9 +98,9 @@ exports.removePoi = async ({ poi_id }) => {
 
 exports.generateUrl = async () => {
   const client = new S3Client({ region: process.env.AWSREGION })
-  const command = new GetObjectCommand({
+  const command = new PutObjectCommand({
     Bucket: process.env.AWSBUCKETNAME, 
-    Key: process.env.AWSSECRETACCESSKEY,
+    Key: 'test.jpg',
     'content-type': 'photo/jpg'
     // ACL:'public-read'
   })
