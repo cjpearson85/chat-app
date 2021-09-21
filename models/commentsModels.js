@@ -5,13 +5,13 @@ const mongoose = require('mongoose')
 
 exports.selectComments = async (queries, { route_id }) => {
   const {
-    sort_by = 'created_at',
+    sort_by = 'createdAt',
     order = 'desc',
     limit = 15,
     page = 1,
   } = queries
 
-  if (!['created_at', 'likes']
+  if (!['createdAt', 'likes']
     .includes(sort_by) || 
         !['asc', 'desc'].includes(order) ||
         !Number.isInteger(parseInt(limit)) ||

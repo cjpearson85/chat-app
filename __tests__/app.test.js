@@ -466,7 +466,6 @@ describe('Route', () => {
       } = await request
         .get('/api/routes?user_id=6143a704366e787fcfb34278')
         .expect(200)
-      console.log(routes)
       expect(routes).toBeInstanceOf(Array)
       expect(routes.length).toBeGreaterThan(0)
       routes.forEach((route) => {
@@ -1025,6 +1024,13 @@ describe('Comments', () => {
           route_id: '6143a704366e787fcfb3428f',
         })
       )
+    })
+    it.only('default sort is by createdAt descending', async () => {
+      const {
+        body: { comments },
+      } = await request.get('/api/routes/6143a704366e787fcfb34285/comments').expect(200)
+      console.log(comments)
+      expect(comments).toBeSortedBy('createdAt', { descending: true })
     })
   })
   describe('PATCH - /comments/:comment_id', () => {

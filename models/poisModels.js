@@ -74,5 +74,8 @@ exports.updatePoi = async ({ photo, narration, likes, user }, { poi_id }) => {
 
 exports.removePoi = async ({ poi_id }) => {
   return Poi.findByIdAndDelete(poi_id)
+}
 
+exports.getUrl = async () => {
+  
 }
