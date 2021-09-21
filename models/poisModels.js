@@ -2,8 +2,8 @@ const Poi = require('../schemas/poi')
 const PoiLike = require('../schemas/poi-like')
 const db = require('../db/connection')
 const mongoose = require('mongoose')
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner")
+const { S3Client, GetObjectCommand, PutObjectCommand } = require("@aws-sdk/client-s3")
 
 exports.selectPoisByRoute = async (route_id) => {
   const result = await Poi.find({ route_id: `${route_id}` })
@@ -96,14 +96,14 @@ exports.removePoi = async ({ poi_id }) => {
   return Poi.findByIdAndDelete(poi_id)
 }
 
-exports.generateUri = async () => {
-  const client = new S3Client({ region: process.env.AWSREGION });
-  const command = new GetObjectCommand({
+exports.generateUrl = async () => {
+  const client = new S3Client({ region: process.env.AWSREGION })
+  const command = new PutObjectCommand({
     Bucket: process.env.AWSBUCKETNAME, 
-    Key: process.env.AWSSECRETACCESSKEY,
-    signatureVersion: 'v4',
+    Key: 'test.jpg',
+    'content-type': 'photo/jpg'
     // ACL:'public-read'
   })
-  const url = await getSignedUrl(client, command, { expiresIn: 3600 });
+  const url = await getSignedUrl(client, command, { expiresIn: 3600 })
   return url
 }
