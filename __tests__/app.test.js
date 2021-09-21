@@ -167,8 +167,7 @@ describe('Users', () => {
         avatar_url: 'http://img.url',
         password: 'pizza',
       }
-      const user = await request
-        .post('/api/signup').expect(201).send(testReq)
+      const user = await request.post('/api/signup').expect(201).send(testReq)
       const testPatchReq = {
         username: 'sonic_hedgehog',
       }
@@ -176,7 +175,8 @@ describe('Users', () => {
         body: { msg },
       } = await request
         .patch(`/api/users/${user._id}`)
-        .expect(400).send(testPatchReq)
+        .expect(400)
+        .send(testPatchReq)
       expect(msg).toBe('Username is taken')
     })
     it('should respond with 400 if user does not exist', async () => {
@@ -307,7 +307,9 @@ describe('Users', () => {
   })
   describe('GET - /users/:user_id/following', () => {
     it('returns user IDs of all accounts followed by user in param', async () => {
-      const { body: { following } } = await request
+      const {
+        body: { following },
+      } = await request
         .get('/api/users/6143a704366e787fcfb34280/following')
         .expect(200)
       expect(following).toBeInstanceOf(Array)
@@ -315,7 +317,7 @@ describe('Users', () => {
       following.forEach((followedUser) => {
         expect(followedUser).toEqual(
           expect.objectContaining({
-            followed_id: expect.any(String)
+            followed_id: expect.any(String),
           })
         )
       })
@@ -323,7 +325,9 @@ describe('Users', () => {
   })
   describe('GET - /users/:user_id/followers', () => {
     it('returns user IDs of all accounts who follow user in param', async () => {
-      const { body: { followers } } = await request
+      const {
+        body: { followers },
+      } = await request
         .get('/api/users/6143a704366e787fcfb34280/followers')
         .expect(200)
       expect(followers).toBeInstanceOf(Array)
@@ -331,7 +335,7 @@ describe('Users', () => {
       followers.forEach((follower) => {
         expect(follower).toEqual(
           expect.objectContaining({
-            follower_id: expect.any(String)
+            follower_id: expect.any(String),
           })
         )
       })
@@ -341,36 +345,39 @@ describe('Users', () => {
     it('user in param follows user in request body', async () => {
       const testUserReq = {
         username: 'sonic_hedgehog',
-        password: 'pizza'
+        password: 'pizza',
       }
-      const { body: { user: newUser } } = await request
-        .post('/api/signup')
-        .expect(201)
-        .send(testUserReq)
-      const { body: { follow } } = await request
+      const {
+        body: { user: newUser },
+      } = await request.post('/api/signup').expect(201).send(testUserReq)
+      const {
+        body: { follow },
+      } = await request
         .post(`/api/users/${newUser._id}/following`)
         .send({ follow: '6143a704366e787fcfb34282' })
         .expect(201)
       expect(follow).toEqual(
         expect.objectContaining({
           follower_id: newUser._id,
-          followed_id: '6143a704366e787fcfb34282'
-        }))
+          followed_id: '6143a704366e787fcfb34282',
+        })
+      )
     })
     it('rejects with 400 if user already followed', async () => {
       const testUserReq = {
         username: 'sonic_hedgehog',
-        password: 'pizza'
+        password: 'pizza',
       }
-      const { body: { user: newUser } } = await request
-        .post('/api/signup')
-        .expect(201)
-        .send(testUserReq)
+      const {
+        body: { user: newUser },
+      } = await request.post('/api/signup').expect(201).send(testUserReq)
       await request
         .post(`/api/users/${newUser._id}/following`)
         .send({ follow: '6143a704366e787fcfb34282' })
         .expect(201)
-      const { body: { msg } } = await request
+      const {
+        body: { msg },
+      } = await request
         .post(`/api/users/${newUser._id}/following`)
         .send({ follow: '6143a704366e787fcfb34282' })
         .expect(400)
@@ -381,43 +388,47 @@ describe('Users', () => {
     it('user in param unfollows user in request body', async () => {
       const testUserReq = {
         username: 'sonic_hedgehog',
-        password: 'pizza'
+        password: 'pizza',
       }
-      const { body: { user: newUser } } = await request
-        .post('/api/signup')
-        .expect(201)
-        .send(testUserReq)
+      const {
+        body: { user: newUser },
+      } = await request.post('/api/signup').expect(201).send(testUserReq)
       await request
         .post(`/api/users/${newUser._id}/following`)
         .send({ follow: '6143a704366e787fcfb34282' })
         .expect(201)
-      const { body: { following } } = await request
-        .get(`/api/users/${newUser._id}/following`)
-        .expect(200)
-      expect(following.map(followed => followed.followed_id)
-        .includes('6143a704366e787fcfb34282'))
-        .toBe(true)
+      const {
+        body: { following },
+      } = await request.get(`/api/users/${newUser._id}/following`).expect(200)
+      expect(
+        following
+          .map((followed) => followed.followed_id)
+          .includes('6143a704366e787fcfb34282')
+      ).toBe(true)
       await request
         .delete(`/api/users/${newUser._id}/following`)
         .send({ follow: '6143a704366e787fcfb34282' })
         .expect(204)
-      const { body: { following: updatedFollowing } } = await request
-        .get(`/api/users/${newUser._id}/following`)
-        .expect(200)
-      expect(updatedFollowing.map(followed => followed.followed_id)
-        .includes('6143a704366e787fcfb34282'))
-        .toBe(false)
+      const {
+        body: { following: updatedFollowing },
+      } = await request.get(`/api/users/${newUser._id}/following`).expect(200)
+      expect(
+        updatedFollowing
+          .map((followed) => followed.followed_id)
+          .includes('6143a704366e787fcfb34282')
+      ).toBe(false)
     })
     it('rejects with 400 if user not followed', async () => {
       const testUserReq = {
         username: 'sonic_hedgehog',
-        password: 'pizza'
+        password: 'pizza',
       }
-      const { body: { user: newUser } } = await request
-        .post('/api/signup')
-        .expect(201)
-        .send(testUserReq)
-      const { body: { msg } } = await request
+      const {
+        body: { user: newUser },
+      } = await request.post('/api/signup').expect(201).send(testUserReq)
+      const {
+        body: { msg },
+      } = await request
         .delete(`/api/users/${newUser._id}/following`)
         .send({ follow: '6143a704366e787fcfb34282' })
         .expect(400)
@@ -475,7 +486,7 @@ describe('Route', () => {
             title: expect.any(String),
             description: expect.any(String),
             user_id: expect.objectContaining({
-              _id: '6143a704366e787fcfb34278'
+              _id: '6143a704366e787fcfb34278',
             }),
             coords: expect.any(Array),
             start_time_date: expect.any(String),
@@ -639,21 +650,32 @@ describe('Route', () => {
           expect(user.body.msg).toEqual('Bad request')
         })
     })
-    it('should increment a routes likes', async() => {
-      const { body: { user: { _id } } } = await request
+    it('should increment a routes likes', async () => {
+      const {
+        body: {
+          user: { _id },
+        },
+      } = await request
         .post('/api/signup')
         .send({
           username: 'sonic_hedgehog',
           password: 'pizza',
         })
         .expect(201)
-      const { body: { route: { likes: oldLikes } } } = await request
-        .get('/api/routes/6143a704366e787fcfb34286').expect(200)
+      const {
+        body: {
+          route: { likes: oldLikes },
+        },
+      } = await request.get('/api/routes/6143a704366e787fcfb34286').expect(200)
       const testReq = {
         likes: 1,
-        user: _id
+        user: _id,
       }
-      const { body: { route: { likes: newLikes } } } = await request
+      const {
+        body: {
+          route: { likes: newLikes },
+        },
+      } = await request
         .patch('/api/routes/6143a704366e787fcfb34286')
         .send(testReq)
         .expect(200)
@@ -662,27 +684,43 @@ describe('Route', () => {
     it('should cancel a like', async () => {
       await request
         .patch(`/api/routes/6143a704366e787fcfb34286`)
-        .send({ likes: 1, user: '6143a704366e787fcfb34274'})
+        .send({ likes: 1, user: '6143a704366e787fcfb34274' })
         .expect(200)
-      const { body: { likes: { routes } } } = await request
+      const {
+        body: {
+          likes: { routes },
+        },
+      } = await request
         .get('/api/users/6143a704366e787fcfb34274/likes')
         .expect(200)
-      expect(routes.map(route => route.route_id)
-        .includes('6143a704366e787fcfb34286'))
-        .toBe(true)
+      expect(
+        routes
+          .map((route) => route.route_id)
+          .includes('6143a704366e787fcfb34286')
+      ).toBe(true)
       await request
         .patch(`/api/routes/6143a704366e787fcfb34286`)
-        .send({ likes: -1, user: '6143a704366e787fcfb34274'})
+        .send({ likes: -1, user: '6143a704366e787fcfb34274' })
         .expect(200)
-      const { body: { likes: { routes: updated } } } = await request
+      const {
+        body: {
+          likes: { routes: updated },
+        },
+      } = await request
         .get('/api/users/6143a704366e787fcfb34274/likes')
         .expect(200)
-      expect(updated.map(route => route.route_id)
-        .includes('6143a704366e787fcfb34286'))
-        .toBe(false)
+      expect(
+        updated
+          .map((route) => route.route_id)
+          .includes('6143a704366e787fcfb34286')
+      ).toBe(false)
     })
     it('should reject with 400 duplicate like by same user', async () => {
-      const { body: { user: { _id } } } = await request
+      const {
+        body: {
+          user: { _id },
+        },
+      } = await request
         .post('/api/signup')
         .send({
           username: 'sonic_hedgehog',
@@ -691,37 +729,45 @@ describe('Route', () => {
         .expect(201)
       const testReq = {
         likes: 1,
-        user: _id
+        user: _id,
       }
       await request
         .patch('/api/routes/6143a704366e787fcfb34286')
         .send(testReq)
         .expect(200)
-      const { body: { msg } } = await request
+      const {
+        body: { msg },
+      } = await request
         .patch('/api/routes/6143a704366e787fcfb34286')
         .send(testReq)
         .expect(400)
-      expect(msg).toBe("Bad request - duplicate like")
+      expect(msg).toBe('Bad request - duplicate like')
     })
     it('should reject with 400 if cancelling non-existent like', async () => {
-      const { body: { user: { _id } } } = await request
-        .post('/api/signup')
-        .send({
-          username: 'sonic_hedgehog',
-          password: 'pizza',
-        })
-      const { body: { msg } } = await request
+      const {
+        body: {
+          user: { _id },
+        },
+      } = await request.post('/api/signup').send({
+        username: 'sonic_hedgehog',
+        password: 'pizza',
+      })
+      const {
+        body: { msg },
+      } = await request
         .patch('/api/routes/6143a704366e787fcfb34286')
-        .send({ likes: -1, user: _id})
+        .send({ likes: -1, user: _id })
         .expect(400)
-      expect(msg).toBe("Bad request - like not found")
+      expect(msg).toBe('Bad request - like not found')
     })
     it('reject 400, no user provided', async () => {
-      const { body: { msg } } = await request
+      const {
+        body: { msg },
+      } = await request
         .patch('/api/routes/6143a704366e787fcfb34286')
-        .send({ likes: -1})
+        .send({ likes: -1 })
         .expect(400)
-      expect(msg).toBe("Bad request - missing field(s)")
+      expect(msg).toBe('Bad request - missing field(s)')
     })
     it('should decrement likes', async () => {
       const testDate = new Date()
@@ -732,22 +778,31 @@ describe('Route', () => {
         coords: parseStrava(testCoords),
         start_time_date: testDate,
       }
-      const { body: { route: newRoute } } = await request
-        .post('/api/routes').send(testReq).expect(201)
+      const {
+        body: { route: newRoute },
+      } = await request.post('/api/routes').send(testReq).expect(201)
       const testReq2 = {
         likes: 1,
-        user: '6143a704366e787fcfb34282'
+        user: '6143a704366e787fcfb34282',
       }
-      const { body: { route: { likes: oldLikes } } } = await request
+      const {
+        body: {
+          route: { likes: oldLikes },
+        },
+      } = await request
         .patch(`/api/routes/${newRoute._id}`)
         .send(testReq2)
         .expect(200)
       expect(oldLikes).toBe(1)
       const testReq3 = {
         likes: -1,
-        user: '6143a704366e787fcfb34282'
+        user: '6143a704366e787fcfb34282',
       }
-      const { body: { route: { likes: newLikes } } } = await request
+      const {
+        body: {
+          route: { likes: newLikes },
+        },
+      } = await request
         .patch(`/api/routes/${newRoute._id}`)
         .send(testReq3)
         .expect(200)
@@ -812,7 +867,7 @@ describe('Poi', () => {
         expect.objectContaining({
           route_id: '6143a704366e787fcfb34286',
           _id: expect.any(String),
-          photo: 'http://example.com',
+          photo: expect.any(String),
           narration: 'what an interesting place!',
           user_id: '6143a704366e787fcfb34278',
           coords: expect.objectContaining({
@@ -840,9 +895,13 @@ describe('Poi', () => {
   })
   describe('PATCH - /poi/:poi_id', () => {
     it('should update a POI', async () => {
-      const { body: { poi: { photo } } } = await request
+      const {
+        body: {
+          poi: { photo },
+        },
+      } = await request
         .patch('/api/poi/6143a705366e787fcfb342f4')
-        .send({photo: 'http://newphoto'})
+        .send({ photo: 'http://newphoto' })
         .expect(200)
       expect(photo).toBe('http://newphoto')
     })
@@ -856,48 +915,72 @@ describe('Poi', () => {
           expect(res.body.msg).toEqual('Bad request')
         })
     })
-    it('should increment a POIs likes', async() => {
-      const { body: { user: { _id } } } = await request
+    it('should increment a POIs likes', async () => {
+      const {
+        body: {
+          user: { _id },
+        },
+      } = await request
         .post('/api/signup')
         .send({
           username: 'sonic_hedgehog',
           password: 'pizza',
         })
         .expect(201)
-      const { body: { poi: { likes: oldLikes } } } = await request
+      const {
+        body: {
+          poi: { likes: oldLikes },
+        },
+      } = await request
         .patch('/api/poi/6143a705366e787fcfb34303')
-        .send({narration: 'new body'})
+        .send({ narration: 'new body' })
         .expect(200)
-      const { body: { poi: { likes: newLikes } } } = await request
+      const {
+        body: {
+          poi: { likes: newLikes },
+        },
+      } = await request
         .patch('/api/poi/6143a705366e787fcfb34303')
-        .send({likes: 1, user: _id})
+        .send({ likes: 1, user: _id })
         .expect(200)
       expect(newLikes).toBe(oldLikes + 1)
     })
     it('should cancel a like', async () => {
       await request
         .patch(`/api/poi/6143a705366e787fcfb34303`)
-        .send({ likes: 1, user: '6143a704366e787fcfb34274'})
+        .send({ likes: 1, user: '6143a704366e787fcfb34274' })
         .expect(200)
-      const { body: { likes: { pois } } } = await request
+      const {
+        body: {
+          likes: { pois },
+        },
+      } = await request
         .get('/api/users/6143a704366e787fcfb34274/likes?like_type=pois')
         .expect(200)
-      expect(pois.map(poi => poi.poi_id)
-        .includes('6143a705366e787fcfb34303'))
-        .toBe(true)
+      expect(
+        pois.map((poi) => poi.poi_id).includes('6143a705366e787fcfb34303')
+      ).toBe(true)
       await request
         .patch(`/api/poi/6143a705366e787fcfb34303`)
-        .send({ likes: -1, user: '6143a704366e787fcfb34274'})
+        .send({ likes: -1, user: '6143a704366e787fcfb34274' })
         .expect(200)
-      const { body: { likes: { pois: updated } } } = await request
+      const {
+        body: {
+          likes: { pois: updated },
+        },
+      } = await request
         .get('/api/users/6143a704366e787fcfb34274/likes?like_type=pois')
         .expect(200)
-      expect(updated.map(poi => poi.poi_id)
-        .includes('6143a705366e787fcfb34303'))
-        .toBe(false)
+      expect(
+        updated.map((poi) => poi.poi_id).includes('6143a705366e787fcfb34303')
+      ).toBe(false)
     })
     it('should reject with 400 duplicate like by same user', async () => {
-      const { body: { user: { _id } } } = await request
+      const {
+        body: {
+          user: { _id },
+        },
+      } = await request
         .post('/api/signup')
         .send({
           username: 'sonic_hedgehog',
@@ -906,37 +989,45 @@ describe('Poi', () => {
         .expect(201)
       const testReq = {
         likes: 1,
-        user: _id
+        user: _id,
       }
       await request
         .patch('/api/poi/6143a705366e787fcfb34303')
         .send(testReq)
         .expect(200)
-      const { body: { msg } } = await request
+      const {
+        body: { msg },
+      } = await request
         .patch('/api/poi/6143a705366e787fcfb34303')
         .send(testReq)
         .expect(400)
-      expect(msg).toBe("Bad request - duplicate like")
+      expect(msg).toBe('Bad request - duplicate like')
     })
     it('should reject with 400 if cancelling non-existent like', async () => {
-      const { body: { user: { _id } } } = await request
-        .post('/api/signup')
-        .send({
-          username: 'sonic_hedgehog',
-          password: 'pizza',
-        })
-      const { body: { msg } } = await request
+      const {
+        body: {
+          user: { _id },
+        },
+      } = await request.post('/api/signup').send({
+        username: 'sonic_hedgehog',
+        password: 'pizza',
+      })
+      const {
+        body: { msg },
+      } = await request
         .patch('/api/poi/6143a705366e787fcfb34303')
-        .send({ likes: -1, user: _id})
+        .send({ likes: -1, user: _id })
         .expect(400)
-      expect(msg).toBe("Bad request - like not found")
+      expect(msg).toBe('Bad request - like not found')
     })
     it('reject 400, no user provided', async () => {
-      const { body: { msg } } = await request
+      const {
+        body: { msg },
+      } = await request
         .patch('/api/poi/6143a705366e787fcfb34303')
-        .send({ likes: -1})
+        .send({ likes: -1 })
         .expect(400)
-      expect(msg).toBe("Bad request - missing field(s)")
+      expect(msg).toBe('Bad request - missing field(s)')
     })
     it('should decrement likes', async () => {
       const testReq = {
@@ -948,23 +1039,34 @@ describe('Poi', () => {
           time: '2019-01-22T18:33:09Z',
         },
       }
-      const { body: { poi: newPoi } } = await request
+      const {
+        body: { poi: newPoi },
+      } = await request
         .post('/api/routes/6143a704366e787fcfb34287/poi')
-        .send(testReq).expect(201)
+        .send(testReq)
+        .expect(201)
       const testReq2 = {
         likes: 1,
-        user: '6143a704366e787fcfb34282'
+        user: '6143a704366e787fcfb34282',
       }
-      const { body: { poi: { likes: oldLikes } } } = await request
+      const {
+        body: {
+          poi: { likes: oldLikes },
+        },
+      } = await request
         .patch(`/api/poi/${newPoi._id}`)
         .send(testReq2)
         .expect(200)
       expect(oldLikes).toBe(1)
       const testReq3 = {
         likes: -1,
-        user: '6143a704366e787fcfb34282'
+        user: '6143a704366e787fcfb34282',
       }
-      const { body: { poi: { likes: newLikes } } } = await request
+      const {
+        body: {
+          poi: { likes: newLikes },
+        },
+      } = await request
         .patch(`/api/poi/${newPoi._id}`)
         .send(testReq3)
         .expect(200)
@@ -973,9 +1075,7 @@ describe('Poi', () => {
   })
   describe('DELETE - /poi/:poi_id', () => {
     it('should delete a poi given as param', async () => {
-      await request
-        .delete('/api/poi/6143a705366e787fcfb342f5')
-        .expect(204)
+      await request.delete('/api/poi/6143a705366e787fcfb342f5').expect(204)
     })
   })
 })
@@ -1035,7 +1135,11 @@ describe('Comments', () => {
   })
   describe('PATCH - /comments/:comment_id', () => {
     it('should edit a comment body', async () => {
-      const { body: { comment: { body: commentBody } } } = await request
+      const {
+        body: {
+          comment: { body: commentBody },
+        },
+      } = await request
         .patch('/api/comments/6143a705366e787fcfb342d8')
         .send({ body: 'I updated my comment!' })
         .expect(200)
@@ -1051,48 +1155,76 @@ describe('Comments', () => {
           expect(res.body.msg).toEqual('Bad request')
         })
     })
-    it('should increment a comments likes', async() => {
-      const { body: { user: { _id } } } = await request
+    it('should increment a comments likes', async () => {
+      const {
+        body: {
+          user: { _id },
+        },
+      } = await request
         .post('/api/signup')
         .send({
           username: 'sonic_hedgehog',
           password: 'pizza',
         })
         .expect(201)
-      const { body: { comment: { likes: oldLikes } } } = await request
+      const {
+        body: {
+          comment: { likes: oldLikes },
+        },
+      } = await request
         .patch('/api/comments/6143a705366e787fcfb342da')
-        .send({body: 'new body'})
+        .send({ body: 'new body' })
         .expect(200)
-      const { body: { comment: { likes: newLikes } } } = await request
+      const {
+        body: {
+          comment: { likes: newLikes },
+        },
+      } = await request
         .patch('/api/comments/6143a705366e787fcfb342da')
-        .send({likes: 1, user: _id})
+        .send({ likes: 1, user: _id })
         .expect(200)
       expect(newLikes).toBe(oldLikes + 1)
     })
     it('should cancel a like', async () => {
       await request
         .patch(`/api/comments/6143a705366e787fcfb342da`)
-        .send({ likes: 1, user: '6143a704366e787fcfb34274'})
+        .send({ likes: 1, user: '6143a704366e787fcfb34274' })
         .expect(200)
-      const { body: { likes: { comments } } } = await request
+      const {
+        body: {
+          likes: { comments },
+        },
+      } = await request
         .get('/api/users/6143a704366e787fcfb34274/likes?like_type=comments')
         .expect(200)
-      expect(comments.map(comment => comment.comment_id)
-        .includes('6143a705366e787fcfb342da'))
-        .toBe(true)
+      expect(
+        comments
+          .map((comment) => comment.comment_id)
+          .includes('6143a705366e787fcfb342da')
+      ).toBe(true)
       await request
         .patch(`/api/comments/6143a705366e787fcfb342da`)
-        .send({ likes: -1, user: '6143a704366e787fcfb34274'})
+        .send({ likes: -1, user: '6143a704366e787fcfb34274' })
         .expect(200)
-      const { body: { likes: { comments: updated } } } = await request
+      const {
+        body: {
+          likes: { comments: updated },
+        },
+      } = await request
         .get('/api/users/6143a704366e787fcfb34274/likes')
         .expect(200)
-      expect(updated.map(comment => comment.comment_id)
-        .includes('6143a705366e787fcfb342da'))
-        .toBe(false)
+      expect(
+        updated
+          .map((comment) => comment.comment_id)
+          .includes('6143a705366e787fcfb342da')
+      ).toBe(false)
     })
     it('should reject with 400 duplicate like by same user', async () => {
-      const { body: { user: { _id } } } = await request
+      const {
+        body: {
+          user: { _id },
+        },
+      } = await request
         .post('/api/signup')
         .send({
           username: 'sonic_hedgehog',
@@ -1101,60 +1233,79 @@ describe('Comments', () => {
         .expect(201)
       const testReq = {
         likes: 1,
-        user: _id
+        user: _id,
       }
       await request
         .patch('/api/comments/6143a705366e787fcfb342da')
         .send(testReq)
         .expect(200)
-      const { body: { msg } } = await request
+      const {
+        body: { msg },
+      } = await request
         .patch('/api/comments/6143a705366e787fcfb342da')
         .send(testReq)
         .expect(400)
-      expect(msg).toBe("Bad request - duplicate like")
+      expect(msg).toBe('Bad request - duplicate like')
     })
     it('should reject with 400 if cancelling non-existent like', async () => {
-      const { body: { user: { _id } } } = await request
-        .post('/api/signup')
-        .send({
-          username: 'sonic_hedgehog',
-          password: 'pizza',
-        })
-      const { body: { msg } } = await request
+      const {
+        body: {
+          user: { _id },
+        },
+      } = await request.post('/api/signup').send({
+        username: 'sonic_hedgehog',
+        password: 'pizza',
+      })
+      const {
+        body: { msg },
+      } = await request
         .patch('/api/comments/6143a705366e787fcfb342da')
-        .send({ likes: -1, user: _id})
+        .send({ likes: -1, user: _id })
         .expect(400)
-      expect(msg).toBe("Bad request - like not found")
+      expect(msg).toBe('Bad request - like not found')
     })
     it('reject 400, no user provided', async () => {
-      const { body: { msg } } = await request
+      const {
+        body: { msg },
+      } = await request
         .patch('/api/comments/6143a705366e787fcfb342da')
-        .send({ likes: -1})
+        .send({ likes: -1 })
         .expect(400)
-      expect(msg).toBe("Bad request - missing field(s)")
+      expect(msg).toBe('Bad request - missing field(s)')
     })
     it('should decrement likes', async () => {
       const testReq = {
         user_id: '6143a704366e787fcfb34276',
         body: 'here is what I think',
       }
-      const { body: { comment: newComment } } = await request
+      const {
+        body: { comment: newComment },
+      } = await request
         .post('/api/routes/6143a704366e787fcfb34287/comments')
-        .send(testReq).expect(201)
+        .send(testReq)
+        .expect(201)
       const testReq2 = {
         likes: 1,
-        user: '6143a704366e787fcfb34282'
+        user: '6143a704366e787fcfb34282',
       }
-      const { body: { comment: { likes: oldLikes } } } = await request
+      const {
+        body: {
+          comment: { likes: oldLikes },
+        },
+      } = await request
         .patch(`/api/comments/${newComment._id}`)
         .send(testReq2)
         .expect(200)
       expect(oldLikes).toBe(1)
       const testReq3 = {
         likes: -1,
-        user: '6143a704366e787fcfb34282'
+        user: '6143a704366e787fcfb34282',
       }
-      const { body: { comment: { likes: newLikes } } } = await request
+      const {
+        body: {
+          comment: { likes: newLikes },
+        },
+      } = await request
         .patch(`/api/comments/${newComment._id}`)
         .send(testReq3)
         .expect(200)
