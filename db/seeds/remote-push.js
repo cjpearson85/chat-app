@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const uri = require('../../devDbUri')
 const devData = require('../data/dev-data/index')
 const User = require('../../schemas/user')
 const Route = require('../../schemas/route')
@@ -11,7 +10,7 @@ const Follow = require('../../schemas/follow')
 
 async function seedDB() {
   try {
-    const connection = await mongoose.connect(uri)
+    const connection = await mongoose.connect('')
 
     console.log('Connected correctly to server')
 

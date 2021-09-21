@@ -1125,6 +1125,13 @@ describe('Comments', () => {
         })
       )
     })
+    it.only('default sort is by createdAt descending', async () => {
+      const {
+        body: { comments },
+      } = await request.get('/api/routes/6143a704366e787fcfb34285/comments').expect(200)
+      console.log(comments)
+      expect(comments).toBeSortedBy('createdAt', { descending: true })
+    })
   })
   describe('PATCH - /comments/:comment_id', () => {
     it('should edit a comment body', async () => {
