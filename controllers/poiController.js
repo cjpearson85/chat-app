@@ -3,6 +3,7 @@ const {
   insertPoi,
   updatePoi,
   removePoi,
+  generateUri
 } = require('../models/poisModels')
 const { uploadImage } = require('../models/s3')
 const multer = require('multer')
@@ -42,6 +43,14 @@ exports.deletePoi = (req, res, next) => {
   removePoi(req.params)
     .then(() => {
       res.status(204).send()
+    })
+    .catch(next)
+}
+
+exports.getUri = (req, res, next) => {
+  generateUri()
+    .then((uri) => {
+      res.status(200).send({uri})
     })
     .catch(next)
 }
