@@ -7,9 +7,6 @@ const {
   postUser,
   postLogin,
 } = require('../controllers/userControllers')
-const {
-  addImage
-} = require('../controllers/poiController')
 
 apiRouter.use('/users', userRouter)
 apiRouter.use('/routes', routesRouter)
@@ -20,7 +17,5 @@ apiRouter.route('/signup')
   .post(postUser)
 apiRouter.route('/login')
   .post(postLogin)
-apiRouter.route('/add_image')
-  .get(addImage)
 
 module.exports = apiRouter

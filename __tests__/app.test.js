@@ -867,7 +867,7 @@ describe('Poi', () => {
         expect.objectContaining({
           route_id: '6143a704366e787fcfb34286',
           _id: expect.any(String),
-          photo: expect.any(String),
+          // photo: expect.any(String),
           narration: 'what an interesting place!',
           user_id: '6143a704366e787fcfb34278',
           coords: expect.objectContaining({
@@ -1102,6 +1102,12 @@ describe('Comments', () => {
         )
       })
     })
+    it('default sort is by createdAt descending', async () => {
+      const {
+        body: { comments },
+      } = await request.get('/api/routes/6143a704366e787fcfb34285/comments').expect(200)
+      expect(comments).toBeSortedBy('createdAt', { descending: true })
+    })
   })
   describe('POST - /routes/:route_id/comments', () => {
     it('should add a comment to a route', async () => {
@@ -1124,13 +1130,6 @@ describe('Comments', () => {
           route_id: '6143a704366e787fcfb3428f',
         })
       )
-    })
-    it.only('default sort is by createdAt descending', async () => {
-      const {
-        body: { comments },
-      } = await request.get('/api/routes/6143a704366e787fcfb34285/comments').expect(200)
-      console.log(comments)
-      expect(comments).toBeSortedBy('createdAt', { descending: true })
     })
   })
   describe('PATCH - /comments/:comment_id', () => {
