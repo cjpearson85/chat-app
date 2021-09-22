@@ -306,12 +306,13 @@ describe('Users', () => {
     })
   })
   describe('GET - /users/:user_id/following', () => {
-    it('returns user IDs of all accounts followed by user in param', async () => {
+    it.only('returns user IDs of all accounts followed by user in param', async () => {
       const {
         body: { following },
       } = await request
         .get('/api/users/6143a704366e787fcfb34280/following')
         .expect(200)
+        console.log(following)
       expect(following).toBeInstanceOf(Array)
       expect(following.length).toBeGreaterThan(0)
       following.forEach((followedUser) => {
