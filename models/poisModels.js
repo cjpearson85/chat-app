@@ -3,9 +3,9 @@ const PoiLike = require('../schemas/poi-like')
 const db = require('../db/connection')
 const mongoose = require('mongoose')
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
+const { generateSalt } = require('../utils')
 const {
   S3Client,
-  GetObjectCommand,
   PutObjectCommand,
 } = require('@aws-sdk/client-s3')
 
@@ -95,12 +95,12 @@ exports.removePoi = async ({ poi_id }) => {
 }
 
 exports.generateUrl = async () => {
+  const key = generateSalt()
   const client = new S3Client({ region: process.env.AWSREGION })
   const command = new PutObjectCommand({
     Bucket: process.env.AWSBUCKETNAME,
-    Key: 'test.jpg',
+    Key: key,
     'content-type': 'photo/jpg',
-    // ACL:'public-read'
   })
   const url = await getSignedUrl(client, command, { expiresIn: 3600 })
   return url
