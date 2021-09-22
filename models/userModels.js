@@ -165,12 +165,12 @@ exports.selectLikes = async ({ user_id }, { like_type }) => {
 
 exports.selectFollowing = async ({ user_id }) => {
   return Follow.find({ follower_id: user_id })
-    .select('followed_id')
+    .populate('followed_id', ['username', 'avatar_url', 'bio', 'name'])
 }
 
 exports.selectFollowers = async ({ user_id }) => {
   return Follow.find({ followed_id: user_id })
-    .select('follower_id')
+    .populate('follower_id', ['username', 'avatar_url', 'bio', 'name'])
 }
 
 exports.insertFollow = async ({ user_id }, { follow }) => {
